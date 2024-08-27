@@ -16,4 +16,8 @@ public class Cryptocurrency implements Serializable {
         this.name = name;
         this.marketPrice = new BigDecimal(marketPrice);
     }
+
+    public String getShortHandSymbol () {
+        return shorthandSymbol;
+    }
 }

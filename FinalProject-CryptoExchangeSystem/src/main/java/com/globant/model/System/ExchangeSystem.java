@@ -3,20 +3,23 @@ package com.globant.model.System;
 import com.globant.model.Orders.OrderBook;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExchangeSystem implements Serializable {
     private static ExchangeSystem exchangeSystemInstance;
 
     private List <User> users;
-    private List <Cryptocurrency> cryptocurrencies;
+    private Map<Cryptocurrency, BigDecimal> cryptocurrencies = new HashMap<>();
     private OrderBook orderBook;
     private int idUserCounter;
 
     private ExchangeSystem () {
         this.users = new ArrayList<>();
-        this.cryptocurrencies = new ArrayList<>();
+        this.cryptocurrencies = new HashMap<>();
         this.orderBook = new OrderBook();
         this.idUserCounter = 0;
     }
@@ -56,6 +59,13 @@ public class ExchangeSystem implements Serializable {
 
     public static void setInstance (ExchangeSystem instance) {
         exchangeSystemInstance = instance;
+    }
+
+    public Cryptocurrency getCryptocurrencyByShorthandSymbol (String shortHandSymbol) {
+        for (Map.Entry <Cryptocurrency, BigDecimal> entry : cryptocurrencies.entrySet()) {
+            if (entry.getKey().getShortHandSymbol().equals(shortHandSymbol)) return entry.getKey();
+        }
+        return null;
     }
 
     @Override

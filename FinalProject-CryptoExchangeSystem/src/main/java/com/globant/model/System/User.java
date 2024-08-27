@@ -15,12 +15,12 @@ public class User implements Serializable {
     private Wallet wallet;
     private List <Transaction> transactions;
 
-    public User (int id, String name, String email, String password) {
+    public User (int id, String name, String email, String password, List cryptos) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.wallet = new Wallet();
+        this.wallet = new Wallet(cryptos);
         this.transactions = new ArrayList<>();
     }
 
@@ -30,6 +30,14 @@ public class User implements Serializable {
 
     public String getPassword () {
         return password;
+    }
+
+    public Wallet getWallet () {
+        return wallet;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
