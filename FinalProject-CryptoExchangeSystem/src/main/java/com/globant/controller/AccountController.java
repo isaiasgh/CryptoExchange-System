@@ -1,5 +1,6 @@
 package com.globant.controller;
 
+import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
 import com.globant.service.ExchangeSystemService;
 import com.globant.service.UnknownAccountException;
@@ -9,6 +10,8 @@ import com.globant.view.MainView;
 public class AccountController {
     private MainView view;
     private UserService userService = new UserService ();
+    private SystemController systemController;
+
 
     public AccountController (MainView view) {
         this.view = view;
@@ -21,7 +24,9 @@ public class AccountController {
         try{
             User user = userService.logIn(email, password);
             if (user == null) return;
-            view.showInfo("You have logged in successfully");
+
+            systemController = new SystemController(user);
+            systemController.handleAccountMenu();
         } catch (UnknownAccountException e) {
             view.showError("Incorrect credentials");
         }
