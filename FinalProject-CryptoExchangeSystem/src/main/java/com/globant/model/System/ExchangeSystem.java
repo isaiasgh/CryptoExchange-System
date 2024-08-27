@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExchangeSystem implements Serializable {
-    private ExchangeSystem exchangeSystemInstance;
+    private static ExchangeSystem exchangeSystemInstance;
 
     private List <User> user;
     private List <Cryptocurrency> cryptocurrencies;
@@ -26,14 +26,14 @@ public class ExchangeSystem implements Serializable {
         return idUserCounter;
     }
 
-    public ExchangeSystem getInstance () {
+    public static ExchangeSystem getInstance () {
         if (exchangeSystemInstance == null) {
             exchangeSystemInstance = new ExchangeSystem ();
         }
         return exchangeSystemInstance;
     }
 
-    public void setInstance (ExchangeSystem exchangeSystemInstance) {
-        this.exchangeSystemInstance = exchangeSystemInstance;
+    public static void setInstance (ExchangeSystem instance) {
+        exchangeSystemInstance = instance;
     }
 }
