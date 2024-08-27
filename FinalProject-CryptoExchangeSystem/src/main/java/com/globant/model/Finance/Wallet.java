@@ -14,9 +14,9 @@ public class Wallet implements Serializable {
     public Wallet (List<Cryptocurrency> cryptos) {
         cryptocurrenciesBalance = new HashMap <> ();
 
-        for (Cryptocurrency crypto : cryptos) {
-            cryptocurrenciesBalance.put(crypto, new BigDecimal("0"));
-        }
+       for (Cryptocurrency crypto : cryptos) {
+           cryptocurrenciesBalance.put(crypto, new BigDecimal("0"));
+       }
 
         fiatMoneyBalance = new BigDecimal(0);
     }

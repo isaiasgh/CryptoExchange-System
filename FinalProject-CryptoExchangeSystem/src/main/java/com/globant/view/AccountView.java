@@ -2,6 +2,7 @@ package com.globant.view;
 
 import com.globant.model.Finance.Wallet;
 import com.globant.model.System.Cryptocurrency;
+import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
 
 import java.math.BigDecimal;

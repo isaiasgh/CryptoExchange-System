@@ -19,9 +19,20 @@ public class ExchangeSystem implements Serializable {
 
     private ExchangeSystem () {
         this.users = new ArrayList<>();
-        this.cryptocurrencies = new HashMap<>();
         this.orderBook = new OrderBook();
         this.idUserCounter = 0;
+
+        initializeCryptoCurrencies ();
+    }
+
+    public void initializeCryptoCurrencies () {
+        Cryptocurrency bitcoin = new Cryptocurrency("BTN", "Bitcoin", "50000");
+        Cryptocurrency ethereum = new Cryptocurrency("ETH", "Ethereum", "3000");
+        Cryptocurrency dogecoin = new Cryptocurrency("DOGE", "Dogecoin", "250");
+
+        cryptocurrencies.put(bitcoin, new BigDecimal("100"));
+        cryptocurrencies.put(ethereum, new BigDecimal("500"));
+        cryptocurrencies.put(dogecoin, new BigDecimal("1500"));
     }
 
     public int getNextUserId () {
@@ -57,15 +68,15 @@ public class ExchangeSystem implements Serializable {
         return exchangeSystemInstance;
     }
 
-    public static void setInstance (ExchangeSystem instance) {
-        exchangeSystemInstance = instance;
-    }
-
     public Cryptocurrency getCryptocurrencyByShorthandSymbol (String shortHandSymbol) {
         for (Map.Entry <Cryptocurrency, BigDecimal> entry : cryptocurrencies.entrySet()) {
             if (entry.getKey().getShortHandSymbol().equals(shortHandSymbol)) return entry.getKey();
         }
         return null;
+    }
+
+    public static void setInstance (ExchangeSystem instance) {
+        exchangeSystemInstance = instance;
     }
 
     @Override
