@@ -16,4 +16,17 @@ public class Cryptocurrency implements Serializable {
         this.name = name;
         this.marketPrice = new BigDecimal(marketPrice);
     }
+
+    public String getShortHandSymbol () {
+        return shorthandSymbol;
+    }
+
+    public BigDecimal getMarketPrice() {
+        return marketPrice;
+    }
+
+    @Override
+    public String toString () {
+        return name + "(ID: " + uniqueID + ")\nMarket Price: $" + marketPrice;
+    }
 }
