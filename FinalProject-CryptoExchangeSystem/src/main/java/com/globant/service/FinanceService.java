@@ -1,6 +1,9 @@
 package com.globant.service;
 
+import com.globant.model.Finance.Transaction;
 import com.globant.model.Finance.Wallet;
+import com.globant.model.Orders.BuyOrder;
+import com.globant.model.Orders.SellingOrder;
 import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
@@ -35,5 +38,35 @@ public class FinanceService {
         ExchangeSystem.getInstance().updateCrypto(crypto, newTotalAmount);
         wallet.addCryptoBalance(crypto, amount);
         return totalPrice;
+    }
+
+    public boolean executeTrade (BuyOrder buyOrder, SellingOrder sellingOrder) {
+        Cryptocurrency crypto = sellingOrder.getCryptocurrencyType();
+        BigDecimal fiatMoneyAmount = sellingOrder.getMinimumPrice();
+        BigDecimal cryptoMoneyAmount = sellingOrder.getAmount();
+        User buyer = buyOrder.getOwner();
+        User seller = sellingOrder.getOwner();
+
+        if (!buyer.getWallet().subtractFiatMoney(fiatMoneyAmount)) return false;
+
+        seller.getWallet().addFiatMoney(fiatMoneyAmount);
+
+        if (!seller.getWallet().subtractCryptoBalance(crypto, cryptoMoneyAmount)) {
+            seller.getWallet().subtractFiatMoney(fiatMoneyAmount);
+            return false;
+        }
+
+        buyer.getWallet().addCryptoBalance(crypto, cryptoMoneyAmount);
+        return true;
+    }
+
+    public boolean generateTransaction (User buyer, User seller, BigDecimal amount, BigDecimal price, Cryptocurrency crypto) {
+        Transaction buyTransaction = new Transaction (crypto, amount, price, 'B');
+        Transaction sellingTransaction = new Transaction (crypto, amount, price, 'S');
+
+        buyer.addTransaction(buyTransaction);
+        buyer.addTransaction(sellingTransaction);
+
+        return true;
     }
 }

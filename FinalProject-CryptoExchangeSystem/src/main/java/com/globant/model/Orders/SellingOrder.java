@@ -11,4 +11,8 @@ public class SellingOrder extends Order {
         super (cryptocurrencyType, amount);
         this.minimumPrice = new BigDecimal(minimumPrice);
     }
+
+    public BigDecimal getMinimumPrice() {
+        return minimumPrice;
+    }
 }

@@ -11,10 +11,10 @@ public class Transaction implements Serializable {
     private BigDecimal price;
     private Character type;
 
-    public Transaction (Cryptocurrency cryptocurrency, String amountTraded, String price, Character type) {
+    public Transaction (Cryptocurrency cryptocurrency, BigDecimal amountTraded, BigDecimal price, Character type) {
         this.cryptocurrency = cryptocurrency;
-        this.amountTraded = new BigDecimal (amountTraded);
-        this.price = new BigDecimal (price);
+        this.amountTraded = amountTraded;
+        this.price = price;
         this.type = type;
     }
 }

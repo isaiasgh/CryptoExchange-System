@@ -22,18 +22,32 @@ public class Wallet implements Serializable {
         fiatMoneyBalance = new BigDecimal(0);
     }
 
-    public void addFiatMoney (BigDecimal amount) {
-        fiatMoneyBalance = fiatMoneyBalance.add(amount);
-    }
-
     public boolean addCryptoBalance  (Cryptocurrency crypto, BigDecimal amount) {
         BigDecimal newAmount = cryptocurrenciesBalance.get(crypto).add(amount);
         cryptocurrenciesBalance.put(crypto, newAmount);
         return true;
     }
 
-    public void subtractFiatMoney (BigDecimal amount) {
+    public boolean subtractCryptoBalance(Cryptocurrency crypto, BigDecimal cryptoMoneyAmount) {
+        BigDecimal currentAmount = cryptocurrenciesBalance.get(crypto);
+
+        if (cryptoMoneyAmount.compareTo(currentAmount) > 0) return false;
+
+        BigDecimal newAmount = currentAmount.subtract(cryptoMoneyAmount);
+        cryptocurrenciesBalance.put(crypto, newAmount);
+        return true;
+    }
+
+    public boolean addFiatMoney (BigDecimal amount) {
+        fiatMoneyBalance = fiatMoneyBalance.add(amount);
+        return true;
+    }
+
+    public boolean subtractFiatMoney (BigDecimal amount) {
+        if (amount.compareTo(fiatMoneyBalance) > 0) return false;
+
         fiatMoneyBalance = fiatMoneyBalance.subtract(amount);
+        return true;
     }
 
     public HashMap<Cryptocurrency, BigDecimal> getCryptocurrenciesBalance() {

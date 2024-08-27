@@ -106,6 +106,10 @@ public class ExchangeSystem implements Serializable {
         return listInfo;
     }
 
+    public OrderBook getOrderBook() {
+        return orderBook;
+    }
+
     public static void setInstance (ExchangeSystem instance) {
         exchangeSystemInstance = instance;
     }

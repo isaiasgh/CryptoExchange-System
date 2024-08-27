@@ -25,6 +25,10 @@ public class Cryptocurrency implements Serializable {
         return marketPrice;
     }
 
+    public String getUniqueID() {
+        return uniqueID;
+    }
+
     @Override
     public String toString () {
         return name + "(ID: " + uniqueID + ")\nMarket Price: $" + marketPrice;

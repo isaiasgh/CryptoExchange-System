@@ -11,4 +11,8 @@ public class BuyOrder extends Order {
         super (cryptocurrencyType, amount);
         this.maximumPrice = new BigDecimal(maximumPrice);
     }
+
+    public BigDecimal getMaximumPrice() {
+        return maximumPrice;
+    }
 }

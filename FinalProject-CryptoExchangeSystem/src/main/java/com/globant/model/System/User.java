@@ -24,6 +24,11 @@ public class User implements Serializable {
         this.transactions = new ArrayList<>();
     }
 
+    public boolean addTransaction (Transaction transaction) {
+        transactions.add(transaction);
+        return true;
+    }
+
     public String getEmail () {
         return email;
     }
