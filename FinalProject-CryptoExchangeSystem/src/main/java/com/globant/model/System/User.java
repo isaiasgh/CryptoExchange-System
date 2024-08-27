@@ -23,4 +23,21 @@ public class User implements Serializable {
         this.wallet = new Wallet();
         this.transactions = new ArrayList<>();
     }
+
+    public String getEmail () {
+        return email;
+    }
+
+    public String getPassword () {
+        return password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }
