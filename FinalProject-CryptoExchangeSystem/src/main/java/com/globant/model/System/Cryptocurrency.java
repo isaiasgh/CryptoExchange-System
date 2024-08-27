@@ -20,4 +20,13 @@ public class Cryptocurrency implements Serializable {
     public String getShortHandSymbol () {
         return shorthandSymbol;
     }
+
+    public BigDecimal getMarketPrice() {
+        return marketPrice;
+    }
+
+    @Override
+    public String toString () {
+        return name + "(ID: " + uniqueID + ")\nMarket Price: $" + marketPrice;
+    }
 }

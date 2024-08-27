@@ -8,7 +8,7 @@ public class MainView extends View {
         System.out.println("[3] Quit");
     }
 
-    public void displayTryAgain () {
+    public void retryEmailInput () {
         System.out.println("Would you like to try with other email or return to the Main Menu?");
         System.out.println("[1] Try again");
         System.out.println("[2] Return to the Main Menu");

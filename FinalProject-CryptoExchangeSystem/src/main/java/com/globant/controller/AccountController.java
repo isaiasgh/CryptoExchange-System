@@ -1,5 +1,6 @@
 package com.globant.controller;
 
+import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
 import com.globant.service.ExchangeSystemService;
 import com.globant.service.UnknownAccountException;
@@ -50,7 +51,7 @@ public class AccountController {
 
     public void handleEmailUsed () {
         while (true) {
-            view.displayTryAgain();
+            view.retryEmailInput();
             int choice = view.getUserChoice (2);
             switch (choice) {
                 case 1:

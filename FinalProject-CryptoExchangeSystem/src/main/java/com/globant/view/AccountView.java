@@ -6,10 +6,7 @@ import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AccountView extends View {
     public void displayAccountMenu () {
@@ -20,6 +17,28 @@ public class AccountView extends View {
         System.out.println("[4] Place Order");
         System.out.println("[5] View Transaction history");
         System.out.println("[6] Logout");
+    }
+
+    public void displayPurchaseConfirmation(User user, Wallet wallet, Cryptocurrency crypto, BigDecimal amountPurchased, BigDecimal totalCost) {
+        super.showInfo("Purchase completed successfully.");
+        String message = "User ID: %s\n" +
+                "Purchased Cryptocurrency: %s\n" +
+                "Amount Purchased: %s %s\n" +
+                "Total Cost: $%s\n" +
+                "Updated Fiat Money Balance: $%s\n" +
+                "Updated %s Balance: %s %s\n";
+
+        BigDecimal updatedCryptoBalance = wallet.getCryptocurrenciesBalance().get(crypto);
+        System.out.printf(message,
+                user.getId(),
+                crypto.getShortHandSymbol(),
+                amountPurchased,
+                crypto.getShortHandSymbol(),
+                totalCost,
+                wallet.getFiatMoneyBalance(),
+                crypto.getShortHandSymbol(),
+                updatedCryptoBalance,
+                crypto.getShortHandSymbol());
     }
 
     public BigDecimal getAmountInput() {
@@ -33,8 +52,25 @@ public class AccountView extends View {
         }
     }
 
-    public void diplayCancelationMessage() {
-        super.showInfo("Deposit has been canceled");
+    public String getSelectedCrypto() {
+        System.out.print("Enter the shorthand symbol: ");
+        return scanner.next().toUpperCase();
+    }
+
+    public void displayCryptocurrenciesInfo () {
+        super.showInfo("Cryptocurrencies: ");
+        List <String> listInfo = ExchangeSystem.getInstance().getCryptosInfo();
+
+        for (String s : listInfo) {
+            System.out.println(ANSI_BLUE + "========================================================" + ANSI_RESET);
+            System.out.println(s);
+        }
+
+        System.out.println(ANSI_BLUE + "========================================================" + ANSI_RESET);
+    }
+
+    public void displayCancelationMessage(String subject) {
+        super.showInfo(subject + " has been canceled");
     }
 
     public void displayDepositConfirmation(User user, Wallet wallet) {

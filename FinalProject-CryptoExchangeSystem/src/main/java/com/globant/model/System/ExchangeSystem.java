@@ -35,6 +35,18 @@ public class ExchangeSystem implements Serializable {
         cryptocurrencies.put(dogecoin, new BigDecimal("1500"));
     }
 
+    public boolean updateCrypto (Cryptocurrency crypto, BigDecimal newTotalAmount) {
+        if (cryptocurrencies.containsKey(crypto)) {
+            cryptocurrencies.put(crypto, newTotalAmount);
+            return true;
+        }
+        return false;
+    }
+
+    public BigDecimal getCryptoTotalAmount (Cryptocurrency crypto) {
+        return cryptocurrencies.get(crypto);
+    }
+
     public int getNextUserId () {
         idUserCounter++;
         return idUserCounter;
@@ -73,6 +85,25 @@ public class ExchangeSystem implements Serializable {
             if (entry.getKey().getShortHandSymbol().equals(shortHandSymbol)) return entry.getKey();
         }
         return null;
+    }
+
+    public Map<Cryptocurrency, BigDecimal> getCryptocurrencies() {
+        return cryptocurrencies;
+    }
+
+    public List <String> getCryptosInfo () {
+        String info = "";
+        List <String> listInfo = new ArrayList<>();
+
+        for (Map.Entry <Cryptocurrency, BigDecimal> crypto : cryptocurrencies.entrySet()) {
+            if (crypto.getValue().compareTo(new BigDecimal("0")) != 0) {
+                info += crypto.getKey().toString();
+                info += "\nAvailable amount: " + crypto.getValue() + " " + crypto.getKey().getShortHandSymbol();
+                listInfo.add(info);
+                info = "";
+            }
+        }
+        return listInfo;
     }
 
     public static void setInstance (ExchangeSystem instance) {
