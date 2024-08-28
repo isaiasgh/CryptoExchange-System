@@ -1,5 +1,6 @@
 package com.globant.view;
 
+import java.math.BigDecimal;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -10,6 +11,10 @@ public class View {
 
     protected final Scanner scanner = new Scanner(System.in);
     protected static final int INVALID_CHOICE = -1;
+
+    public void displayCancellationMessage(String subject) {
+        showInfo(subject + " has been canceled");
+    }
 
     public void showError(String errorMessage) {
         System.out.println(ANSI_RED + errorMessage + ANSI_RESET);
@@ -27,6 +32,22 @@ public class View {
             scanner.nextLine();
             return INVALID_CHOICE;
         }
+    }
+
+    public BigDecimal getBigDecimalInput (String messsage) {
+        try {
+            System.out.print(messsage);
+            return scanner.nextBigDecimal();
+        } catch (InputMismatchException e) {
+            showError("Invalid amount format. Please enter a valid number or type 0 to cancel");
+            scanner.nextLine();
+            return getBigDecimalInput(messsage);
+        }
+    }
+
+    public String getUserCryptoChoice() {
+        System.out.print("Enter the shorthand symbol: ");
+        return scanner.next().toUpperCase();
     }
 
     public void showInfo(String message) {

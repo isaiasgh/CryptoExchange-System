@@ -18,8 +18,23 @@ public class FinanceService {
     }
 
     public Cryptocurrency getCryptoSelected (String shorthandSymbol) {
-        Cryptocurrency crypto = ExchangeSystem.getInstance().getCryptocurrencyByShorthandSymbol(shorthandSymbol);
-        return crypto;
+        return ExchangeSystem.getInstance().getCryptocurrencyByShorthandSymbol(shorthandSymbol);
+    }
+
+    public boolean checkEnoughFunds(Wallet wallet, BigDecimal amount) {
+        if (wallet.getFiatMoneyBalance().compareTo(amount) >= 0) {
+            return true;
+        }
+
+        throw new InsufficientFundsException();
+    }
+
+    public boolean checkEnoughFunds(Wallet wallet, BigDecimal amount, Cryptocurrency crypto) {
+        if (wallet.getCryptocurrenciesBalance().get(crypto).compareTo(amount) >= 0) {
+            return true;
+        }
+
+        throw new InsufficientFundsException();
     }
 
     public BigDecimal buy (Wallet wallet, Cryptocurrency crypto, BigDecimal amount) {

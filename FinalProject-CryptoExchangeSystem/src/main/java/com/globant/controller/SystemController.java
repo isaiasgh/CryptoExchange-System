@@ -13,11 +13,13 @@ import java.math.BigDecimal;
 public class SystemController {
     private final AccountView accountView = new AccountView();
     private final FinanceService financeService = new FinanceService();
+    private final PlaceOrderController placeOrderController;
 
     private User user;
 
     public SystemController (User user) {
         this.user = user;
+        placeOrderController = new PlaceOrderController (user, financeService);
     }
 
     public void handleAccountMenu () {
@@ -28,10 +30,10 @@ public class SystemController {
 
             switch (choice) {
                 case 1:
-                    amount = accountView.getAmountInput();
+                    amount = accountView.getBigDecimalInput("Enter the amount: ");
 
                     if (amount.compareTo(new BigDecimal("0")) == 0) {
-                        accountView.displayCancelationMessage("Deposit");
+                        accountView.displayCancellationMessage("Deposit");
                         break;
                     }
 
@@ -44,18 +46,18 @@ public class SystemController {
                     break;
                 case 3:
                     accountView.displayCryptocurrenciesInfo();
-                    String selectedCrypto = accountView.getSelectedCrypto();
+                    String selectedCrypto = accountView.getUserCryptoChoice();
                     Cryptocurrency crypto = handleSelectedCrypto (selectedCrypto);
 
                     if (crypto == null) {
-                        accountView.displayCancelationMessage("Purchase");
+                        accountView.displayCancellationMessage("Purchase");
                         break;
                     }
 
-                    amount = accountView.getAmountInput();
+                    amount = accountView.getBigDecimalInput("Enter the amount: ");
 
                     if (amount.compareTo(new BigDecimal("0")) == 0) {
-                        accountView.displayCancelationMessage("Purchase");
+                        accountView.displayCancellationMessage("Purchase");
                         break;
                     }
 
@@ -68,7 +70,7 @@ public class SystemController {
 
                     break;
                 case 4:
-
+                    placeOrderController.handlePlaceOrderMenu();
                     break;
                 case 5:
 
@@ -85,7 +87,7 @@ public class SystemController {
         try {
             return financeService.buy(user.getWallet(), crypto, amount);
         } catch (InsufficientFundsException e) {
-            accountView.showError("ERROR: You do not have enough money into your account. Please try again later.");
+            accountView.showError("ERROR: You do not have enough funds in your account. Please try again later.");
             return new BigDecimal("0");
         } catch (InsufficientExchangeFundsException e) {
             accountView.showError("ERROR: The exchange system does not have enough amount available.");
@@ -100,8 +102,8 @@ public class SystemController {
 
         if (crypto == null) {
             accountView.showError("Invalid input. Please enter a valid shorthand symbol or '0' to cancel.");
-            String newSelectedCrypto = accountView.getSelectedCrypto().toUpperCase();
-            handleSelectedCrypto(newSelectedCrypto);
+            String newSelectedCrypto = accountView.getUserCryptoChoice().toUpperCase();
+            return handleSelectedCrypto(newSelectedCrypto);
         }
 
         return crypto;

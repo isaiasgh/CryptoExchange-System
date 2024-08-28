@@ -82,7 +82,7 @@ public class ExchangeSystem implements Serializable {
 
     public Cryptocurrency getCryptocurrencyByShorthandSymbol (String shortHandSymbol) {
         for (Map.Entry <Cryptocurrency, BigDecimal> entry : cryptocurrencies.entrySet()) {
-            if (entry.getKey().getShortHandSymbol().equals(shortHandSymbol)) return entry.getKey();
+            if (entry.getKey().getShorthandSymbol().equals(shortHandSymbol)) return entry.getKey();
         }
         return null;
     }
@@ -98,12 +98,22 @@ public class ExchangeSystem implements Serializable {
         for (Map.Entry <Cryptocurrency, BigDecimal> crypto : cryptocurrencies.entrySet()) {
             if (crypto.getValue().compareTo(new BigDecimal("0")) != 0) {
                 info += crypto.getKey().toString();
-                info += "\nAvailable amount: " + crypto.getValue() + " " + crypto.getKey().getShortHandSymbol();
+                info += "\nAvailable amount: " + crypto.getValue() + " " + crypto.getKey().getShorthandSymbol();
                 listInfo.add(info);
                 info = "";
             }
         }
         return listInfo;
+    }
+
+    public List <Cryptocurrency> getCryptos () {
+        List <Cryptocurrency> cryptos = new ArrayList<>();
+
+        for (Map.Entry <Cryptocurrency, BigDecimal> crypto : cryptocurrencies.entrySet()) {
+            cryptos.add(crypto.getKey());
+        }
+
+        return cryptos;
     }
 
     public OrderBook getOrderBook() {

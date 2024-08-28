@@ -1,7 +1,6 @@
 package com.globant.model.Finance;
 
 import com.globant.model.System.Cryptocurrency;
-import com.globant.model.System.ExchangeSystem;
 
 import java.io.Serializable;
 import java.util.HashMap;

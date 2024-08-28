@@ -11,8 +11,8 @@ public class Order implements Serializable {
     private BigDecimal amount;
     private User owner;
 
-    public Order (Cryptocurrency cryptocurrencyType, String amount) {
-        this.amount = new BigDecimal (amount);
+    public Order (Cryptocurrency cryptocurrencyType, BigDecimal amount, User owner) {
+        this.amount = amount;
         this.cryptocurrencyType = cryptocurrencyType;
     }
 

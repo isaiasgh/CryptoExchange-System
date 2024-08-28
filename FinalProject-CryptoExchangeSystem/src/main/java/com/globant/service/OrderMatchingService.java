@@ -4,15 +4,26 @@ import com.globant.model.Orders.BuyOrder;
 import com.globant.model.Orders.Order;
 import com.globant.model.Orders.OrderBook;
 import com.globant.model.Orders.SellingOrder;
-import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderMatchingService implements Observer {
+public class OrderMatchingService implements Observer, Serializable {
+    private static OrderMatchingService orderMatchingService;
+
+    private OrderMatchingService () {}
+
+    public static OrderMatchingService getInstance () {
+        if (orderMatchingService == null) {
+            orderMatchingService = new OrderMatchingService ();
+        }
+        return orderMatchingService;
+    }
+
     private void matchBuyOrder (BuyOrder buyOrder) {
         List<SellingOrder> sellingOrders = ExchangeSystem.getInstance().getOrderBook().getSellingOrders();
         ArrayList<SellingOrder> matchingOrders = new ArrayList<>();
@@ -33,10 +44,10 @@ public class OrderMatchingService implements Observer {
     }
 
     private void matchSellingOrder (SellingOrder sellingOrder) {
-        List<BuyOrder> buyrOrders = ExchangeSystem.getInstance().getOrderBook().getBuyOrders();
+        List<BuyOrder> buyOrders = ExchangeSystem.getInstance().getOrderBook().getBuyOrders();
         ArrayList<BuyOrder> matchingOrders = new ArrayList<>();
 
-        for (BuyOrder order : buyrOrders) {
+        for (BuyOrder order : buyOrders) {
             if (areSameAmountAndCryptoType(order, sellingOrder)) {
                 if (order.getMaximumPrice().compareTo(sellingOrder.getMinimumPrice()) >= 0) {
                     matchingOrders.add(order);

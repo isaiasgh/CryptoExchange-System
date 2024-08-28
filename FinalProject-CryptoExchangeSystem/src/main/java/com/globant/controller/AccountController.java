@@ -12,7 +12,6 @@ public class AccountController {
     private UserService userService = new UserService ();
     private SystemController systemController;
 
-
     public AccountController (MainView view) {
         this.view = view;
     }

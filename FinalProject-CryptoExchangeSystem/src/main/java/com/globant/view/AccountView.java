@@ -31,35 +31,19 @@ public class AccountView extends View {
         BigDecimal updatedCryptoBalance = wallet.getCryptocurrenciesBalance().get(crypto);
         System.out.printf(message,
                 user.getId(),
-                crypto.getShortHandSymbol(),
+                crypto.getShorthandSymbol(),
                 amountPurchased,
-                crypto.getShortHandSymbol(),
+                crypto.getShorthandSymbol(),
                 totalCost,
                 wallet.getFiatMoneyBalance(),
-                crypto.getShortHandSymbol(),
+                crypto.getShorthandSymbol(),
                 updatedCryptoBalance,
-                crypto.getShortHandSymbol());
-    }
-
-    public BigDecimal getAmountInput() {
-        try {
-            System.out.print("Enter the amount: ");
-            return scanner.nextBigDecimal();
-        } catch (InputMismatchException e) {
-            super.showError("Invalid amount format. Please enter a valid number or type 0 to cancel");
-            scanner.nextLine();
-            return getAmountInput();
-        }
-    }
-
-    public String getSelectedCrypto() {
-        System.out.print("Enter the shorthand symbol: ");
-        return scanner.next().toUpperCase();
+                crypto.getShorthandSymbol());
     }
 
     public void displayCryptocurrenciesInfo () {
         super.showInfo("Cryptocurrencies: ");
-        List <String> listInfo = ExchangeSystem.getInstance().getCryptosInfo();
+        List<String> listInfo = ExchangeSystem.getInstance().getCryptosInfo();
 
         for (String s : listInfo) {
             System.out.println(ANSI_BLUE + "========================================================" + ANSI_RESET);
@@ -67,10 +51,6 @@ public class AccountView extends View {
         }
 
         System.out.println(ANSI_BLUE + "========================================================" + ANSI_RESET);
-    }
-
-    public void displayCancelationMessage(String subject) {
-        super.showInfo(subject + " has been canceled");
     }
 
     public void displayDepositConfirmation(User user, Wallet wallet) {
@@ -88,7 +68,7 @@ public class AccountView extends View {
 
         for (Map.Entry<Cryptocurrency, BigDecimal> entry : wallet.getCryptocurrenciesBalance().entrySet()) {
             if (entry.getValue().compareTo(BigDecimal.ZERO) > 0) {
-                message += entry.getKey().getShortHandSymbol() + " Balance: %s\n";
+                message += entry.getKey().getShorthandSymbol() + " Balance: %s\n";
                 ref.add(entry.getValue());
             }
         }
