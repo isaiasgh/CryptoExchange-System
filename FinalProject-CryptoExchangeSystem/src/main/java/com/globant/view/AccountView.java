@@ -1,5 +1,6 @@
 package com.globant.view;
 
+import com.globant.model.Finance.Transaction;
 import com.globant.model.Finance.Wallet;
 import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.ExchangeSystem;
@@ -39,6 +40,25 @@ public class AccountView extends View {
                 crypto.getShorthandSymbol(),
                 updatedCryptoBalance,
                 crypto.getShorthandSymbol());
+    }
+
+    public void displayTransactions (User user) {
+        List<Transaction> transactions = user.getTransactions();
+
+        if (transactions.isEmpty()) {
+            super.showInfo("No transactions found.");
+            return;
+        }
+
+        super.showInfo("Transaction History for " + user.getName() + ":");
+
+        for (Transaction transaction : transactions) {
+            System.out.println("Transaction ID: " + transaction.getID());
+            System.out.println("Type: " + transaction.getType());
+            System.out.println("Amount: " + transaction.getAmountTraded() + " " + transaction.getCryptocurrency().getShorthandSymbol());
+            System.out.println("Price payed: $" + transaction.getPrice());
+            System.out.println(ANSI_BLUE + "----------" + ANSI_RESET);
+        }
     }
 
     public void displayCryptocurrenciesInfo () {

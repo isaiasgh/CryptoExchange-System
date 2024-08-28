@@ -80,8 +80,15 @@ public class FinanceService {
         Transaction sellingTransaction = new Transaction (crypto, amount, price, 'S');
 
         buyer.addTransaction(buyTransaction);
-        buyer.addTransaction(sellingTransaction);
+        seller.addTransaction(sellingTransaction);
 
+        return true;
+    }
+
+    public boolean generateTransaction (User buyer, BigDecimal amount, BigDecimal price, Cryptocurrency crypto) {
+        Transaction buyTransaction = new Transaction (crypto, amount, price, 'B');
+
+        buyer.addTransaction(buyTransaction);
         return true;
     }
 }

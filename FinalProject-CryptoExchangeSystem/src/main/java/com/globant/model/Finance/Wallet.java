@@ -1,23 +1,20 @@
 package com.globant.model.Finance;
 
 import com.globant.model.System.Cryptocurrency;
+import com.globant.model.System.ExchangeSystem;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.math.BigDecimal;
-import java.util.List;
 
 public class Wallet implements Serializable {
-    private HashMap <Cryptocurrency, BigDecimal> cryptocurrenciesBalance;
+    private HashMap <Cryptocurrency, BigDecimal> cryptocurrenciesBalance = new HashMap<>();
     private BigDecimal fiatMoneyBalance;
 
-    public Wallet (List<Cryptocurrency> cryptos) {
-        cryptocurrenciesBalance = new HashMap <> ();
-
-       for (Cryptocurrency crypto : cryptos) {
-           cryptocurrenciesBalance.put(crypto, new BigDecimal("0"));
-       }
-
+    public Wallet () {
+        cryptocurrenciesBalance.put(ExchangeSystem.getInstance().getBitcoin(), new BigDecimal("0"));
+        cryptocurrenciesBalance.put(ExchangeSystem.getInstance().getDogecoin(), new BigDecimal("0"));
+        cryptocurrenciesBalance.put(ExchangeSystem.getInstance().getEthereum(), new BigDecimal("0"));
         fiatMoneyBalance = new BigDecimal(0);
     }
 

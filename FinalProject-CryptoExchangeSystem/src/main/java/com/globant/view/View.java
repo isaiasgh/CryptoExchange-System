@@ -1,5 +1,8 @@
 package com.globant.view;
 
+import com.globant.model.Finance.Wallet;
+import com.globant.model.System.Cryptocurrency;
+
 import java.math.BigDecimal;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -13,7 +16,15 @@ public class View {
     protected static final int INVALID_CHOICE = -1;
 
     public void displayCancellationMessage(String subject) {
-        showInfo(subject + " has been canceled");
+        showError(subject + " has been canceled");
+    }
+
+    public void displayFiatMoneyBalance (Wallet wallet) {
+        showInfo("Fiat Money balance: $" + wallet.getFiatMoneyBalance());
+    }
+
+    public void displayCryptoBalance (Wallet wallet, Cryptocurrency crypto) {
+        showInfo(crypto.getName() + " balance: " + wallet.getCryptocurrenciesBalance().get(crypto) + " " + crypto.getShorthandSymbol());
     }
 
     public void showError(String errorMessage) {

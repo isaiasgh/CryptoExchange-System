@@ -45,7 +45,13 @@ public class SystemController {
                     accountView.displayWalletBalance(user, user.getWallet());
                     break;
                 case 3:
+                    if (user.getWallet().getFiatMoneyBalance().equals(new BigDecimal("0"))) {
+                        accountView.showError("Currently you do not have fiat money in your account. Please make a deposit and try again later.");
+                        break;
+                    }
+
                     accountView.displayCryptocurrenciesInfo();
+                    accountView.displayFiatMoneyBalance(user.getWallet());
                     String selectedCrypto = accountView.getUserCryptoChoice();
                     Cryptocurrency crypto = handleSelectedCrypto (selectedCrypto);
 
@@ -61,11 +67,12 @@ public class SystemController {
                         break;
                     }
 
-                    BigDecimal totalAmount = handleBuyService(crypto, amount);
+                    BigDecimal totalPrice = handleBuyService(crypto, amount);
 
-                    if (totalAmount.compareTo(new BigDecimal("0")) != 0) {
+                    if (totalPrice.compareTo(new BigDecimal("0")) != 0) {
+                        financeService.generateTransaction(user, amount, totalPrice, crypto);
                         ExchangeSystemService.write();
-                        accountView.displayPurchaseConfirmation(user, user.getWallet(), crypto, amount, totalAmount);
+                        accountView.displayPurchaseConfirmation(user, user.getWallet(), crypto, amount, totalPrice);
                     }
 
                     break;
@@ -73,7 +80,7 @@ public class SystemController {
                     placeOrderController.handlePlaceOrderMenu();
                     break;
                 case 5:
-
+                    accountView.displayTransactions(user);
                     break;
                 case 6:
                     return;

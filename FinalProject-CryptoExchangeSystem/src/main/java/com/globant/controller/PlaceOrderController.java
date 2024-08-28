@@ -2,6 +2,7 @@ package com.globant.controller;
 
 import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.User;
+import com.globant.service.ExchangeSystemService;
 import com.globant.service.FinanceService;
 import com.globant.service.InsufficientFundsException;
 import com.globant.service.OrderBookService;
@@ -43,6 +44,8 @@ public class PlaceOrderController {
 
                     placeOrderView.displayCryptoMarketPrice (crypto);
 
+                    placeOrderView.displayFiatMoneyBalance(user.getWallet());
+
                     amount = placeOrderView.getBigDecimalInput("Enter the amount you want to buy: ");
                     BigDecimal maximumPrice = placeOrderView.getBigDecimalInput("Enter the maximum price you want to pay: ");
 
@@ -51,6 +54,7 @@ public class PlaceOrderController {
                     if (enoughFunds) {
                         orderBookService.createBuyOrder(crypto, amount, maximumPrice, user);
                         placeOrderView.displayBuyOrderConfirmation(crypto, amount, maximumPrice, user);
+                        ExchangeSystemService.write();
                     }
 
                     break;
@@ -66,6 +70,14 @@ public class PlaceOrderController {
 
                     placeOrderView.displayCryptoMarketPrice (crypto);
 
+                    if (user.getWallet().getCryptocurrenciesBalance().get(crypto).equals(new BigDecimal("0"))) {
+                        placeOrderView.showError("You do not have " + crypto.getName() + " to trade.");
+                        placeOrderView.displayCancellationMessage("The creation of a new selling order");
+                        break;
+                    }
+
+                    placeOrderView.displayCryptoBalance(user.getWallet(), crypto);
+
                     amount = placeOrderView.getBigDecimalInput("Enter the amount you want to sell: ");
 
                     enoughFunds = handleEnoughBudget (amount, crypto);
@@ -73,6 +85,7 @@ public class PlaceOrderController {
                     if (enoughFunds) {
                         BigDecimal minimumPrice = placeOrderView.getBigDecimalInput("Enter the minimum price you want tu sell: ");
                         orderBookService.createSellingOrder(crypto, amount, minimumPrice, user);
+                        ExchangeSystemService.write();
                     }
 
                     break;

@@ -85,6 +85,7 @@ public class OrderMatchingService implements Observer, Serializable {
         orderBook.removeSellingOrder (sellingOrder);
 
         financeService.generateTransaction(buyer, seller, amount, price, buyOrder.getCryptocurrencyType());
+        ExchangeSystemService.write();
     }
 
     @Override

@@ -17,6 +17,10 @@ public class ExchangeSystem implements Serializable {
     private OrderBook orderBook;
     private int idUserCounter;
 
+    private final Cryptocurrency bitcoin = new Cryptocurrency("BTN", "Bitcoin", "50000");
+    private final Cryptocurrency ethereum = new Cryptocurrency("ETH", "Ethereum", "3000");
+    private final Cryptocurrency dogecoin = new Cryptocurrency("DOGE", "Dogecoin", "250");
+
     private ExchangeSystem () {
         this.users = new ArrayList<>();
         this.orderBook = new OrderBook();
@@ -26,10 +30,6 @@ public class ExchangeSystem implements Serializable {
     }
 
     public void initializeCryptoCurrencies () {
-        Cryptocurrency bitcoin = new Cryptocurrency("BTN", "Bitcoin", "50000");
-        Cryptocurrency ethereum = new Cryptocurrency("ETH", "Ethereum", "3000");
-        Cryptocurrency dogecoin = new Cryptocurrency("DOGE", "Dogecoin", "250");
-
         cryptocurrencies.put(bitcoin, new BigDecimal("100"));
         cryptocurrencies.put(ethereum, new BigDecimal("500"));
         cryptocurrencies.put(dogecoin, new BigDecimal("1500"));
@@ -114,6 +114,18 @@ public class ExchangeSystem implements Serializable {
         }
 
         return cryptos;
+    }
+
+    public Cryptocurrency getDogecoin() {
+        return dogecoin;
+    }
+
+    public Cryptocurrency getEthereum() {
+        return ethereum;
+    }
+
+    public Cryptocurrency getBitcoin() {
+        return bitcoin;
     }
 
     public OrderBook getOrderBook() {
