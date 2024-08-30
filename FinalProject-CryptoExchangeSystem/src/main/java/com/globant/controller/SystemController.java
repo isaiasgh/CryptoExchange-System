@@ -2,10 +2,8 @@ package com.globant.controller;
 
 import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.User;
-import com.globant.service.ExchangeSystemService;
-import com.globant.service.FinanceService;
-import com.globant.service.InsufficientExchangeFundsException;
-import com.globant.service.InsufficientFundsException;
+import com.globant.service.*;
+import com.globant.util.BudgetCheckResult;
 import com.globant.view.AccountView;
 
 import java.math.BigDecimal;
@@ -27,6 +25,7 @@ public class SystemController {
             accountView.displayAccountMenu ();
             int choice = accountView.getUserChoice (6);
             BigDecimal amount;
+            BudgetCheckResult result;
 
             switch (choice) {
                 case 1:
@@ -45,12 +44,13 @@ public class SystemController {
                     accountView.displayWalletBalance(user, user.getWallet());
                     break;
                 case 3:
+                    accountView.displayCryptocurrenciesInfo();
+
                     if (user.getWallet().getFiatMoneyBalance().equals(new BigDecimal("0"))) {
                         accountView.showError("Currently you do not have fiat money in your account. Please make a deposit and try again later.");
                         break;
                     }
 
-                    accountView.displayCryptocurrenciesInfo();
                     accountView.displayFiatMoneyBalance(user.getWallet());
                     String selectedCrypto = accountView.getUserCryptoChoice();
                     Cryptocurrency crypto = handleSelectedCrypto (selectedCrypto);
@@ -90,15 +90,19 @@ public class SystemController {
         }
     }
 
-    public BigDecimal handleBuyService (Cryptocurrency crypto, BigDecimal amount) {
+    public BigDecimal handleBuyService (Cryptocurrency crypto, BigDecimal quantity) {
+        BudgetCheckResult result = financeService.handleEnoughFiatBudget(quantity.multiply(crypto.getMarketPrice()), user);
+
+        if (!result.isSuccess()) {
+            accountView.showError(result.getErrorMessage());
+            return BigDecimal.ZERO;
+        }
+
         try {
-            return financeService.buy(user.getWallet(), crypto, amount);
-        } catch (InsufficientFundsException e) {
-            accountView.showError("ERROR: You do not have enough funds in your account. Please try again later.");
-            return new BigDecimal("0");
+            return financeService.buy(user, crypto, quantity);
         } catch (InsufficientExchangeFundsException e) {
             accountView.showError("ERROR: The exchange system does not have enough amount available.");
-            return new BigDecimal("0");
+            return BigDecimal.ZERO;
         }
     }
 

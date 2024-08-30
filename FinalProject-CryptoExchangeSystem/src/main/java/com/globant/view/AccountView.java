@@ -56,7 +56,11 @@ public class AccountView extends View {
             System.out.println("Transaction ID: " + transaction.getID());
             System.out.println("Type: " + transaction.getType());
             System.out.println("Amount: " + transaction.getAmountTraded() + " " + transaction.getCryptocurrency().getShorthandSymbol());
-            System.out.println("Price payed: $" + transaction.getPrice());
+            if (transaction.getType().equals('B')) {
+                System.out.println("Price payed: $" + transaction.getPrice());
+            } else {
+                System.out.println("Price received: $" + transaction.getPrice());
+            }
             System.out.println(ANSI_BLUE + "----------" + ANSI_RESET);
         }
     }

@@ -48,7 +48,16 @@ public class View {
     public BigDecimal getBigDecimalInput (String messsage) {
         try {
             System.out.print(messsage);
-            return scanner.nextBigDecimal();
+
+            BigDecimal returnInput = scanner.nextBigDecimal();
+
+            if (returnInput.compareTo(new BigDecimal("0")) < 0) {
+                showError("Invalid amount format. Please enter a valid number or type 0 to cancel");
+                return getBigDecimalInput(messsage);
+            }
+
+            return returnInput;
+
         } catch (InputMismatchException e) {
             showError("Invalid amount format. Please enter a valid number or type 0 to cancel");
             scanner.nextLine();

@@ -7,6 +7,7 @@ import com.globant.model.Orders.SellingOrder;
 import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
+import com.globant.util.BudgetCheckResult;
 
 import java.math.BigDecimal;
 
@@ -21,37 +22,70 @@ public class FinanceService {
         return ExchangeSystem.getInstance().getCryptocurrencyByShorthandSymbol(shorthandSymbol);
     }
 
-    public boolean checkEnoughFunds(Wallet wallet, BigDecimal amount) {
-        if (wallet.getFiatMoneyBalance().compareTo(amount) >= 0) {
-            return true;
-        }
+    private boolean checkEnoughFiatFunds(Wallet wallet, BigDecimal amount, User user) {
+        BigDecimal totalFiatAmount = wallet.getFiatMoneyBalance();
+        BigDecimal fiatAmountInBuyingOrders = OrderBookService.fiatAmountInBuyOrders (wallet, user);
 
-        throw new InsufficientFundsException();
-    }
-
-    public boolean checkEnoughFunds(Wallet wallet, BigDecimal amount, Cryptocurrency crypto) {
-        if (wallet.getCryptocurrenciesBalance().get(crypto).compareTo(amount) >= 0) {
-            return true;
-        }
-
-        throw new InsufficientFundsException();
-    }
-
-    public BigDecimal buy (Wallet wallet, Cryptocurrency crypto, BigDecimal amount) {
-        BigDecimal totalPrice = amount.multiply(crypto.getMarketPrice());
-
-        if (wallet.getFiatMoneyBalance().compareTo(totalPrice) < 0) {
+        if (wallet.getFiatMoneyBalance().compareTo(amount) < 0) {
             throw new InsufficientFundsException();
         }
 
-        if (ExchangeSystem.getInstance().getCryptoTotalAmount(crypto).compareTo(amount) < 0) {
+        if (totalFiatAmount.subtract(fiatAmountInBuyingOrders).compareTo(amount) < 0) {
+            throw new OrdersExceedFiatBalanceException();
+        }
+
+        return true;
+    }
+
+    private boolean checkEnoughCryptoFunds(Wallet wallet, BigDecimal amount, Cryptocurrency crypto, User user) {
+        BigDecimal totalCryptoAmount = wallet.getCryptocurrenciesBalance().get(crypto);
+        BigDecimal cryptoAmountInSellingOrders = OrderBookService.cryptoAmountInSellingOrders (crypto, wallet, user);
+
+        if (totalCryptoAmount.subtract(cryptoAmountInSellingOrders).compareTo(amount) < 0) {
+            throw new ExceedingCryptoBalanceException();
+        }
+
+        if (wallet.getCryptocurrenciesBalance().get(crypto).compareTo(amount) < 0) {
             throw new InsufficientFundsException();
+        }
+
+        return true;
+    }
+
+    public BudgetCheckResult handleEnoughFiatBudget(BigDecimal amount, User user) {
+        try {
+            boolean hasEnoughFunds = checkEnoughFiatFunds(user.getWallet(), amount, user);
+            return new BudgetCheckResult(hasEnoughFunds, null);
+        } catch (InsufficientFundsException e) {
+            return new BudgetCheckResult(false, "ERROR: You do not have enough funds in your account to place this buy order. Please try again later.");
+        } catch (OrdersExceedFiatBalanceException e) {
+            return new BudgetCheckResult(false, "ERROR: Your current buy orders have utilized all of your available fiat balance. Please deposit more funds and try again later.");
+        }
+    }
+
+    public BudgetCheckResult handleEnoughCryptoBudget(BigDecimal amount, Cryptocurrency crypto, User user) {
+        try {
+            boolean hasEnoughCrypto = checkEnoughCryptoFunds(user.getWallet(), amount, crypto, user);
+            return new BudgetCheckResult(hasEnoughCrypto, null);
+        } catch (InsufficientFundsException e) {
+            return new BudgetCheckResult(false, "ERROR: You do not have enough cryptocurrency in your account to place this selling order. Please try again later.");
+        } catch (ExceedingCryptoBalanceException e) {
+            return new BudgetCheckResult(false, "ERROR: The total amount of cryptocurrencies in your sell orders matches your current balance. Please acquire more cryptocurrencies and try again later.");
+        }
+    }
+
+    public BigDecimal buy (User user, Cryptocurrency crypto, BigDecimal quantity) {
+        Wallet wallet = user.getWallet();
+        BigDecimal totalPrice = quantity.multiply(crypto.getMarketPrice());
+
+        if (ExchangeSystem.getInstance().getCryptoTotalAmount(crypto).compareTo(quantity) < 0) {
+            throw new InsufficientExchangeFundsException();
         }
 
         wallet.subtractFiatMoney(totalPrice);
-        BigDecimal newTotalAmount = ExchangeSystem.getInstance().getCryptoTotalAmount(crypto).subtract(amount);
+        BigDecimal newTotalAmount = ExchangeSystem.getInstance().getCryptoTotalAmount(crypto).subtract(quantity);
         ExchangeSystem.getInstance().updateCrypto(crypto, newTotalAmount);
-        wallet.addCryptoBalance(crypto, amount);
+        wallet.addCryptoBalance(crypto, quantity);
         return totalPrice;
     }
 

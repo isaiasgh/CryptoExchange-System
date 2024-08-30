@@ -25,7 +25,7 @@ public class PlaceOrderView extends View {
     }
 
     public void displayBuyOrderConfirmation(Cryptocurrency crypto, BigDecimal amount, BigDecimal maximumPrice, User user)  {
-        super.showInfo("Order Confirmation:");
+        super.showInfo("Buy Order Confirmation:");
         System.out.println("-------------------");
         System.out.println("User ID: " + user.getId());
         System.out.println("Cryptocurrency: " + crypto.getShorthandSymbol());
@@ -34,6 +34,18 @@ public class PlaceOrderView extends View {
         System.out.println("-------------------");
         super.showInfo("Your buy order has been placed successfully.");
     }
+
+    public void displaySellingOrderConfirmation(Cryptocurrency crypto, BigDecimal amount, BigDecimal minimumPrice, User user)  {
+        super.showInfo("Selling Order Confirmation:");
+        System.out.println("-------------------");
+        System.out.println("User ID: " + user.getId());
+        System.out.println("Cryptocurrency: " + crypto.getShorthandSymbol());
+        System.out.println("Amount: " + amount + " " + crypto.getShorthandSymbol());
+        System.out.println("Minimum Price: $" + minimumPrice);
+        System.out.println("-------------------");
+        super.showInfo("Your selling order has been placed successfully.");
+    }
+
 
     public void displayCryptoMarketPrice (Cryptocurrency crypto) {
         super.showInfo("Current " + crypto.getShorthandSymbol() + " price: $" + crypto.getMarketPrice());
