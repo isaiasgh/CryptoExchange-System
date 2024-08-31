@@ -5,7 +5,6 @@ import com.globant.model.System.User;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.UUID;
 
 public class Order implements Serializable {
     private Cryptocurrency cryptocurrencyType;

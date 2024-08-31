@@ -9,6 +9,8 @@ import com.globant.model.Orders.SellingOrder;
 import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
+import com.globant.service.FinanceService;
+import com.globant.service.OrderBookService;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -131,25 +133,28 @@ public class AccountView extends View {
     }
 
     public void displayDepositConfirmation(User user, Wallet wallet) {
+        BigDecimal fiatMoneyBalance = wallet.getFiatMoneyBalance();
+        BigDecimal fiatMoneyInOrders = OrderBookService.fiatAmountInBuyOrders(wallet, user);
+        BigDecimal availableFiatMoney = fiatMoneyBalance.subtract(fiatMoneyInOrders);
         super.showInfo("Wallet balance has been successfully updated");
-        displayWalletBalance(user, wallet);
+        displayFiatMoneyBalance(fiatMoneyInOrders, availableFiatMoney);
     }
 
-    public void displayWalletBalance (User user, Wallet wallet) {
+    public void displayWalletBalance(User user, Wallet wallet) {
         super.showInfo("Wallet balance:");
-        String message = "User ID: %s\nFiat Money Balance: %s\n";
 
-        List<Object> ref = new ArrayList<>();
-        ref.add(user.getId());
-        ref.add(wallet.getFiatMoneyBalance());
+        BigDecimal fiatMoneyBalance = wallet.getFiatMoneyBalance();
+        BigDecimal fiatMoneyInOrders = OrderBookService.fiatAmountInBuyOrders(wallet, user);
+        BigDecimal availableFiatMoney = fiatMoneyBalance.subtract(fiatMoneyInOrders);
+
+        System.out.printf("User ID: %s\n",user.getId());
+        displayFiatMoneyBalance(fiatMoneyInOrders, availableFiatMoney);
 
         for (Map.Entry<Cryptocurrency, BigDecimal> entry : wallet.getCryptocurrenciesBalance().entrySet()) {
             if (entry.getValue().compareTo(BigDecimal.ZERO) > 0) {
-                message += entry.getKey().getShorthandSymbol() + " Balance: %s\n";
-                ref.add(entry.getValue());
+                Cryptocurrency crypto = entry.getKey();
+                displayCryptoBalance(OrderBookService.cryptoAmountInSellingOrders(crypto, user.getWallet(), user), FinanceService.getAvailableCrypto (user, crypto), crypto);
             }
         }
-
-        System.out.printf(message, ref.toArray());
     }
 }

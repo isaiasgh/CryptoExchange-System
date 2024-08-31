@@ -125,4 +125,15 @@ public class FinanceService {
         buyer.addTransaction(buyTransaction);
         return true;
     }
+
+    public static BigDecimal getAvailableFiatMoney (User user) {
+        BigDecimal fiatMoneyBalance = user.getWallet().getFiatMoneyBalance();
+        BigDecimal fiatMoneyInOrders = OrderBookService.fiatAmountInBuyOrders(user.getWallet(), user);
+        return fiatMoneyBalance.subtract(fiatMoneyInOrders);
+    }
+
+    public static BigDecimal getAvailableCrypto (User user, Cryptocurrency crypto) {
+        BigDecimal cryptoInSellOrders = OrderBookService.cryptoAmountInSellingOrders(crypto, user.getWallet(), user);
+        return user.getWallet().getCryptocurrenciesBalance().get(crypto).subtract(cryptoInSellOrders);
+    }
 }
