@@ -5,10 +5,7 @@ import com.globant.model.Orders.Order;
 import com.globant.model.Orders.SellingOrder;
 import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.ExchangeSystem;
-import com.globant.model.System.User;
 
-import java.math.BigDecimal;
-import java.util.InputMismatchException;
 import java.util.List;
 
 public class PlaceOrderView extends View {
@@ -28,43 +25,74 @@ public class PlaceOrderView extends View {
         }
     }
 
-    public void displayBuyOrderConfirmation(Cryptocurrency crypto, BigDecimal amount, BigDecimal maximumPrice, User user)  {
-        super.showInfo("Buy Order Confirmation:");
-        System.out.println("-------------------");
-        System.out.println("User ID: " + user.getId());
-        System.out.println("Cryptocurrency: " + crypto.getShorthandSymbol());
-        System.out.println("Amount: " + amount + " " + crypto.getShorthandSymbol());
-        System.out.println("Maximum Price: $" + maximumPrice);
-        System.out.println("-------------------");
-        super.showInfo("Your buy order has been placed successfully.");
+    public void displayBuyOrderConfirmation(BuyOrder order) {
+        String details = getBuyOrderDetails(order);
+        displayOrderConfirmation(
+                "Buy Order",
+                "Your buy order has been placed successfully.",
+                details, ANSI_BLUE
+        );
     }
 
-    public void displaySellingOrderConfirmation(Cryptocurrency crypto, BigDecimal amount, BigDecimal minimumPrice, User user)  {
-        super.showInfo("Selling Order Confirmation:");
-        System.out.println("-------------------");
-        System.out.println("User ID: " + user.getId());
-        System.out.println("Cryptocurrency: " + crypto.getShorthandSymbol());
-        System.out.println("Amount: " + amount + " " + crypto.getShorthandSymbol());
-        System.out.println("Minimum Price: $" + minimumPrice);
-        System.out.println("-------------------");
-        super.showInfo("Your selling order has been placed successfully.");
+    public void displaySellingOrderConfirmation(SellingOrder order) {
+        String details = getSellingOrderDetails(order);
+        displayOrderConfirmation(
+                "Selling Order",
+                "Your selling order has been placed successfully.",
+                details, ANSI_BLUE
+        );
     }
 
-    public void displayRemoveOrderConfirmation (Order order) {
-        super.showInfo("Order Removal Confirmation:");
-        System.out.println("-------------------");
-        if (order instanceof BuyOrder buyOder) {
-            System.out.println("Buy Order ID: " + order.getID());
-            System.out.println("Cryptocurrency: " + buyOder.getCryptocurrencyType().getShorthandSymbol());
-            System.out.println("Amount: " + buyOder.getAmount() + " " + (buyOder.getCryptocurrencyType().getShorthandSymbol()));
-            System.out.println("Maximum Price: $" + buyOder.getMaximumPrice());
+    public void displayRemoveOrderConfirmation(Order order) {
+        String details = "";
+
+        if (order instanceof BuyOrder buyOrder) {
+            details = getBuyOrderDetails(buyOrder);
         } else if (order instanceof SellingOrder sellingOrder) {
-            System.out.println("Selling Order ID: " + order.getID());
-            System.out.println("Cryptocurrency: " + sellingOrder.getCryptocurrencyType().getShorthandSymbol());
-            System.out.println("Amount: " + sellingOrder.getAmount() + " " + sellingOrder.getCryptocurrencyType().getShorthandSymbol());
-            System.out.println("Minimum Price: $" + sellingOrder.getMinimumPrice());
+            details = getSellingOrderDetails(sellingOrder);
         }
-        System.out.println("-------------------");
+
+        displayOrderConfirmation(
+                "Order Removal",
+                ANSI_RED + "The order has been permanently removed. This action cannot be undone." + ANSI_RESET,
+                details, ANSI_RED
+        );
+    }
+
+    private void displayOrderConfirmation(String orderType, String successMessage, String details, String ANSI) {
+        super.showInfo(ANSI + orderType + " Confirmation:" + ANSI_RESET);
+        System.out.println(ANSI + "-------------------" + ANSI_RESET);
+        System.out.println(details);
+        System.out.println(ANSI + "-------------------" + ANSI_RESET);
+        super.showWarning(successMessage);
+    }
+
+    private String getBuyOrderDetails(BuyOrder order) {
+        return String.format(
+                "Buy Order ID: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
+                        "Cryptocurrency: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
+                        "Amount: " + ANSI_GREEN + "%s %s\n" + ANSI_RESET +
+                        "Maximum Price: " + ANSI_GREEN + "$%s" + ANSI_RESET,
+                order.getID(),
+                order.getCryptocurrencyType().getShorthandSymbol(),
+                order.getAmount(),
+                order.getCryptocurrencyType().getShorthandSymbol(),
+                order.getMaximumPrice()
+        );
+    }
+
+    private String getSellingOrderDetails(SellingOrder order) {
+        return String.format(
+                "Selling Order ID: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
+                        "Cryptocurrency: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
+                        "Amount: " + ANSI_GREEN + "%s %s\n" + ANSI_RESET +
+                        "Minimum Price: " + ANSI_GREEN + "$%s" + ANSI_RESET,
+                order.getID(),
+                order.getCryptocurrencyType().getShorthandSymbol(),
+                order.getAmount(),
+                order.getCryptocurrencyType().getShorthandSymbol(),
+                order.getMinimumPrice()
+        );
     }
 
     public void displayCryptoMarketPrice (Cryptocurrency crypto) {
