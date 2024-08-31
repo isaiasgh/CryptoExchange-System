@@ -7,25 +7,23 @@ import com.globant.model.orders.SellingOrder;
 import com.globant.model.system.Cryptocurrency;
 import com.globant.model.system.ExchangeSystem;
 import com.globant.model.system.User;
+import com.globant.service.fluctuation.MatchBasedPriceFluctuationStrategy;
 import com.globant.service.fluctuation.PriceFluctuationContext;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class OrderMatchingService implements Observer, Serializable {
     private static OrderMatchingService orderMatchingService;
 
-    private Map<Cryptocurrency, Integer> matchCount = new HashMap<>();
+    private Map<Cryptocurrency, Deque<SellingOrder>> matchCount = new HashMap<>();
     private static final int FLUCTUATION_THRESHOLD = 5;
     private PriceFluctuationContext fluctuationContext;
 
     private OrderMatchingService () {
         for (Map.Entry <Cryptocurrency, BigDecimal> entry : ExchangeSystem.getInstance().getCryptocurrencies().entrySet()) {
-            matchCount.put(entry.getKey(), 0);
+            matchCount.put(entry.getKey(), new LinkedList<>());
         }
     }
 
@@ -97,7 +95,8 @@ public class OrderMatchingService implements Observer, Serializable {
         orderBook.removeSellingOrder (sellingOrder);
 
         financeService.generateTransaction(buyer, seller, amount, price, buyOrder.getCryptocurrencyType());
-        incrementMatchCount(buyOrder.getCryptocurrencyType());
+        matchCount.get(sellingOrder.getCryptocurrencyType()).push(sellingOrder);
+        incrementMatchCount(sellingOrder.getCryptocurrencyType());
         ExchangeSystemService.write();
     }
 
@@ -113,17 +112,15 @@ public class OrderMatchingService implements Observer, Serializable {
     }
 
     private void incrementMatchCount(Cryptocurrency crypto) {
-        int currentCounter = matchCount.get(crypto);
-        currentCounter++;
-        matchCount.put(crypto, currentCounter);
-        if (currentCounter == FLUCTUATION_THRESHOLD) {
+        if (matchCount.get(crypto).size() == FLUCTUATION_THRESHOLD) {
             updatePrices(crypto);
-            matchCount.put(crypto, 0);
+            matchCount.put(crypto, new LinkedList<>());
         }
     }
 
     private void updatePrices(Cryptocurrency crypto) {
-
+        fluctuationContext = new PriceFluctuationContext(new MatchBasedPriceFluctuationStrategy());
+        fluctuationContext.updatePrices(crypto, matchCount.get(crypto));
     }
 
     private Object readResolve() {
