@@ -43,7 +43,7 @@ public class ManageOrderController {
                     }
 
                     placeOrderView.displayCryptoMarketPrice (crypto);
-                    placeOrderView.displayFiatMoneyBalance(user.getWallet());
+                    placeOrderView.displayFiatMoneyBalance (OrderBookService.fiatAmountInBuyOrders(user.getWallet(), user), financeService.getAvailableFiatMoney (user));
                     if (!validateNonZeroFiatBalance ()) break;
                     amount = placeOrderView.getBigDecimalInput("Enter the amount you want to buy: ");
                     if (!isValidAmount(amount)) break;
@@ -69,7 +69,7 @@ public class ManageOrderController {
                     }
 
                     placeOrderView.displayCryptoMarketPrice (crypto);
-                    placeOrderView.displayCryptoBalance(user.getWallet(), crypto);
+                    placeOrderView.displayCryptoBalance(OrderBookService.cryptoAmountInSellingOrders(crypto, user.getWallet(), user), FinanceService.getAvailableCrypto (user, crypto), crypto);
                     if (!validateNonZeroCryptoBalance (crypto)) break;
                     amount = placeOrderView.getBigDecimalInput("Enter the amount you want to sell: ");
                     if (!isValidAmount(amount)) break;

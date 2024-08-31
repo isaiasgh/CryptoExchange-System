@@ -1,5 +1,6 @@
 package com.globant.controller;
 
+import com.globant.model.Finance.Wallet;
 import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
@@ -52,7 +53,7 @@ public class SystemController {
                         break;
                     }
 
-                    accountView.displayFiatMoneyBalance(user.getWallet());
+                    accountView.displayFiatMoneyBalance (OrderBookService.fiatAmountInBuyOrders(user.getWallet(), user), financeService.getAvailableFiatMoney (user));
                     String selectedCrypto = accountView.getUserCryptoChoice();
                     Cryptocurrency crypto = handleSelectedCrypto (selectedCrypto);
 

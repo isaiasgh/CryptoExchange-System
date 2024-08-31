@@ -2,6 +2,8 @@ package com.globant.view;
 
 import com.globant.model.Finance.Wallet;
 import com.globant.model.System.Cryptocurrency;
+import com.globant.model.System.User;
+import com.globant.service.OrderBookService;
 
 import java.math.BigDecimal;
 import java.util.InputMismatchException;
@@ -11,6 +13,8 @@ public class View {
     protected static final String ANSI_RED = "\u001B[31m";
     protected static final String ANSI_RESET = "\u001B[0m";
     protected static final String ANSI_BLUE = "\u001B[34m";
+    protected static final String ANSI_YELLOW = "\u001B[33m";
+    protected static final String ANSI_GREEN = "\u001B[32m";
 
     protected final Scanner scanner = new Scanner(System.in);
     protected static final int INVALID_CHOICE = -1;
@@ -19,12 +23,22 @@ public class View {
         showError(subject + " has been canceled");
     }
 
-    public void displayFiatMoneyBalance (Wallet wallet) {
-        showInfo("Fiat Money balance: $" + wallet.getFiatMoneyBalance());
+    public void displayFiatMoneyBalance(BigDecimal fiatMoneyInOrders, BigDecimal availableFiatMoney) {
+        System.out.printf(
+                ANSI_BLUE + "Fiat Money Balance:" + ANSI_RESET + "\n" +
+                        "  Available: " + ANSI_GREEN + "$%s\n" + ANSI_RESET +
+                        "  Committed in Orders: " + "$%s\n",
+                availableFiatMoney, fiatMoneyInOrders
+        );
     }
 
-    public void displayCryptoBalance (Wallet wallet, Cryptocurrency crypto) {
-        showInfo(crypto.getName() + " balance: " + wallet.getCryptocurrenciesBalance().get(crypto) + " " + crypto.getShorthandSymbol());
+    public void displayCryptoBalance(BigDecimal cryptoInSellOrders, BigDecimal availableCrypto, Cryptocurrency crypto) {
+        System.out.printf(
+                ANSI_BLUE + crypto.getName() + " Balance:" + ANSI_RESET + "\n" +
+                        "  Available: " + ANSI_GREEN + "%s " + crypto.getShorthandSymbol() + "\n" + ANSI_RESET +
+                        "  Committed in Sell Orders: " + "%s " + crypto.getShorthandSymbol() + "\n",
+                availableCrypto, cryptoInSellOrders
+        );
     }
 
     public void showError(String errorMessage) {
