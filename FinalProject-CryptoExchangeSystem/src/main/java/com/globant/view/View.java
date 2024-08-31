@@ -31,11 +31,11 @@ public class View {
         System.out.println(ANSI_RED + errorMessage + ANSI_RESET);
     }
 
-    public int getUserChoice (int range) {
-        System.out.print("Enter your choice: ");
+    public int getUserChoice (String message, int minRange, int maxRange) {
+        System.out.print(message);
         try {
             int choice = scanner.nextInt();
-            if (choice < 1 || choice > range) {
+            if (choice < minRange || choice > maxRange) {
                 return INVALID_CHOICE;
             }
             return choice;
@@ -43,6 +43,10 @@ public class View {
             scanner.nextLine();
             return INVALID_CHOICE;
         }
+    }
+
+    public int getUserChoice (int minRange, int maxRange) {
+        return getUserChoice("Enter your choice: ", minRange, maxRange);
     }
 
     public BigDecimal getBigDecimalInput (String messsage) {

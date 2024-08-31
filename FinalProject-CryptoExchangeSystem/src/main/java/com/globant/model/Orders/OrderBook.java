@@ -12,6 +12,7 @@ public class OrderBook implements Serializable {
 
     private List <BuyOrder> buyOrders;
     private List <SellingOrder> sellingOrders;
+    private int idOrderCounter;
 
     public OrderBook () {
         this.buyOrders = new ArrayList<>();
@@ -29,6 +30,15 @@ public class OrderBook implements Serializable {
             return addSellingOrder((SellingOrder) order);
         }
         return false;
+    }
+
+    public int getNextOrderID () {
+        idOrderCounter++;
+        return idOrderCounter;
+    }
+
+    public int getLastOrderID () {
+        return idOrderCounter;
     }
 
     public boolean removeBuyOrder (BuyOrder buyOrder) {

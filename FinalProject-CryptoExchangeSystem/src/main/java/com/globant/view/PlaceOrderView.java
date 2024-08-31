@@ -1,10 +1,14 @@
 package com.globant.view;
 
+import com.globant.model.Orders.BuyOrder;
+import com.globant.model.Orders.Order;
+import com.globant.model.Orders.SellingOrder;
 import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
 
 import java.math.BigDecimal;
+import java.util.InputMismatchException;
 import java.util.List;
 
 public class PlaceOrderView extends View {
@@ -46,6 +50,22 @@ public class PlaceOrderView extends View {
         super.showInfo("Your selling order has been placed successfully.");
     }
 
+    public void displayRemoveOrderConfirmation (Order order) {
+        super.showInfo("Order Removal Confirmation:");
+        System.out.println("-------------------");
+        if (order instanceof BuyOrder buyOder) {
+            System.out.println("Buy Order ID: " + order.getID());
+            System.out.println("Cryptocurrency: " + buyOder.getCryptocurrencyType().getShorthandSymbol());
+            System.out.println("Amount: " + buyOder.getAmount() + " " + (buyOder.getCryptocurrencyType().getShorthandSymbol()));
+            System.out.println("Maximum Price: $" + buyOder.getMaximumPrice());
+        } else if (order instanceof SellingOrder sellingOrder) {
+            System.out.println("Selling Order ID: " + order.getID());
+            System.out.println("Cryptocurrency: " + sellingOrder.getCryptocurrencyType().getShorthandSymbol());
+            System.out.println("Amount: " + sellingOrder.getAmount() + " " + sellingOrder.getCryptocurrencyType().getShorthandSymbol());
+            System.out.println("Minimum Price: $" + sellingOrder.getMinimumPrice());
+        }
+        System.out.println("-------------------");
+    }
 
     public void displayCryptoMarketPrice (Cryptocurrency crypto) {
         super.showInfo("Current " + crypto.getShorthandSymbol() + " price: $" + crypto.getMarketPrice());

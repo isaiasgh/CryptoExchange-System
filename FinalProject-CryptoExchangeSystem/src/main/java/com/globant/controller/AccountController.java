@@ -50,7 +50,7 @@ public class AccountController {
     public void handleEmailUsed () {
         view.retryEmailInput();
         while (true) {
-            int choice = view.getUserChoice (2);
+            int choice = view.getUserChoice (1, 2);
             switch (choice) {
                 case 1:
                     handleRegister ();

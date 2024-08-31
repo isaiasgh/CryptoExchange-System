@@ -5,16 +5,23 @@ import com.globant.model.System.User;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class Order implements Serializable {
     private Cryptocurrency cryptocurrencyType;
     private BigDecimal amount;
     private User owner;
+    private int ID;;
 
-    public Order (Cryptocurrency cryptocurrencyType, BigDecimal amount, User owner) {
+    public Order (Cryptocurrency cryptocurrencyType, BigDecimal amount, User owner, int id) {
+        this.ID = id;
         this.owner = owner;
         this.amount = amount;
         this.cryptocurrencyType = cryptocurrencyType;
+    }
+
+    public int getID() {
+        return ID;
     }
 
     public Cryptocurrency getCryptocurrencyType() {

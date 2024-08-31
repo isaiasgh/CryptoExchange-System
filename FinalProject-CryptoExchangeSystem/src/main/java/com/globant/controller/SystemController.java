@@ -1,6 +1,7 @@
 package com.globant.controller;
 
 import com.globant.model.System.Cryptocurrency;
+import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
 import com.globant.service.*;
 import com.globant.util.BudgetCheckResult;
@@ -11,19 +12,19 @@ import java.math.BigDecimal;
 public class SystemController {
     private final AccountView accountView = new AccountView();
     private final FinanceService financeService = new FinanceService();
-    private final PlaceOrderController placeOrderController;
+    private final ManageOrderController manageOrderController;
 
     private User user;
 
     public SystemController (User user) {
         this.user = user;
-        placeOrderController = new PlaceOrderController (user, financeService);
+        manageOrderController = new ManageOrderController(user, financeService);
     }
 
     public void handleAccountMenu () {
         while (true) {
             accountView.displayAccountMenu ();
-            int choice = accountView.getUserChoice (6);
+            int choice = accountView.getUserChoice (1, 7);
             BigDecimal amount;
             BudgetCheckResult result;
 
@@ -77,12 +78,20 @@ public class SystemController {
 
                     break;
                 case 4:
-                    placeOrderController.handlePlaceOrderMenu();
+                    manageOrderController.handlePlaceOrderMenu();
                     break;
                 case 5:
-                    accountView.displayTransactions(user);
+                    boolean hasActiveOrders = accountView.displayActiveOrders(ExchangeSystem.getInstance().getOrderBook(), user);
+
+                    if (hasActiveOrders) {
+                        handleCancelOrderMenu();
+                    }
+
                     break;
                 case 6:
+                    accountView.displayTransactions(user);
+                    break;
+                case 7:
                     return;
                 default:
                     accountView.showError("Invalid option. Please try again.");
@@ -90,7 +99,7 @@ public class SystemController {
         }
     }
 
-    public BigDecimal handleBuyService (Cryptocurrency crypto, BigDecimal quantity) {
+    private BigDecimal handleBuyService (Cryptocurrency crypto, BigDecimal quantity) {
         BudgetCheckResult result = financeService.handleEnoughFiatBudget(quantity.multiply(crypto.getMarketPrice()), user);
 
         if (!result.isSuccess()) {
@@ -106,7 +115,7 @@ public class SystemController {
         }
     }
 
-    public Cryptocurrency handleSelectedCrypto (String selectedCrypto) {
+    private Cryptocurrency handleSelectedCrypto (String selectedCrypto) {
         Cryptocurrency crypto = financeService.getCryptoSelected(selectedCrypto);
 
         if (selectedCrypto.equals("0")) return null;
@@ -118,5 +127,21 @@ public class SystemController {
         }
 
         return crypto;
+    }
+
+    private void handleCancelOrderMenu () {
+        accountView.showCancelOrderMenu();
+        while (true) {
+            int choice = accountView.getUserChoice (1, 2);
+            switch (choice) {
+                case 1:
+                    manageOrderController.cancelOrder();
+                    return;
+                case 2:
+                    return;
+                default:
+                    accountView.showError("Invalid option. Please try again.");
+            }
+        }
     }
 }

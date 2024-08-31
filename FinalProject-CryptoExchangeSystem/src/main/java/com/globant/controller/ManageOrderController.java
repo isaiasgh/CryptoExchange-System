@@ -1,6 +1,8 @@
 package com.globant.controller;
 
+import com.globant.model.Orders.Order;
 import com.globant.model.System.Cryptocurrency;
+import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
 import com.globant.service.*;
 import com.globant.util.BudgetCheckResult;
@@ -8,13 +10,13 @@ import com.globant.view.PlaceOrderView;
 
 import java.math.BigDecimal;
 
-public class PlaceOrderController {
+public class ManageOrderController {
     private User user;
     private PlaceOrderView placeOrderView = new PlaceOrderView();
     private FinanceService financeService;
     private OrderBookService orderBookService = new OrderBookService();
 
-    public PlaceOrderController (User user, FinanceService financeService) {
+    public ManageOrderController(User user, FinanceService financeService) {
         this.user = user;
         this.financeService = financeService;
     }
@@ -25,7 +27,7 @@ public class PlaceOrderController {
 
         while (true) {
             placeOrderView.displayPlaceOrderMenu();
-            int choice = placeOrderView.getUserChoice(3);
+            int choice = placeOrderView.getUserChoice(1, 3);
             BigDecimal amount;
             BudgetCheckResult result;
 
@@ -90,6 +92,20 @@ public class PlaceOrderController {
         }
     }
 
+    public void cancelOrder() {
+        int orderID = placeOrderView.getUserChoice("Enter the order ID: ", 0, ExchangeSystem.getInstance().getOrderBook().getLastOrderID());
+        Order order = handleOrderSelection(orderID);
+
+        if (order == null) {
+            placeOrderView.displayCancellationMessage("The order removal process");
+            return;
+        }
+
+        orderBookService.removeOrder(order);
+        placeOrderView.displayRemoveOrderConfirmation (order);
+        ExchangeSystemService.write();
+    }
+
     private boolean validateNonZeroCryptoBalance  (Cryptocurrency crypto) {
         if (user.getWallet().getCryptocurrenciesBalance().get(crypto).equals(new BigDecimal("0"))) {
             placeOrderView.showError("You do not have " + crypto.getName() + " to trade.");
@@ -142,5 +158,19 @@ public class PlaceOrderController {
         }
 
         return crypto;
+    }
+
+    private Order handleOrderSelection (int selectedOrder) {
+        Order order = orderBookService.getOrderSelected(selectedOrder);
+
+        if (selectedOrder == 0) return null;
+
+        if (order == null) {
+            placeOrderView.showError("Invalid ID. Please enter a valid ID or '0' to cancel.");
+            int newSelectedOrder = placeOrderView.getUserChoice("Enter the order ID: ", 0, ExchangeSystem.getInstance().getOrderBook().getLastOrderID());
+            return handleOrderSelection(newSelectedOrder);
+        }
+
+        return order;
     }
 }
