@@ -14,7 +14,6 @@ public class RootController {
 
     public void run () {
         ExchangeSystemService.read();
-
         while (true) {
             view.displayInitialMenu ();
             int choice = view.getUserChoice (1, 3);

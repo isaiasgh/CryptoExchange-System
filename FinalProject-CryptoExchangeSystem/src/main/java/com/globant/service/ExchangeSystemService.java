@@ -1,6 +1,6 @@
 package com.globant.service;
 
-import com.globant.model.System.ExchangeSystem;
+import com.globant.model.system.ExchangeSystem;
 
 import java.io.FileOutputStream;
 import java.io.FileInputStream;

@@ -1,8 +1,9 @@
-package com.globant.model.Orders;
+package com.globant.model.orders;
 
 import com.globant.service.Observer;
 import com.globant.service.OrderMatchingService;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
@@ -17,8 +18,15 @@ public class OrderBook implements Serializable {
     public OrderBook () {
         this.buyOrders = new ArrayList<>();
         this.sellingOrders = new ArrayList<>();
+    }
 
+    private void initialize() {
         attach(OrderMatchingService.getInstance());
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        initialize();
     }
 
     public Order addOrder (Order order) {

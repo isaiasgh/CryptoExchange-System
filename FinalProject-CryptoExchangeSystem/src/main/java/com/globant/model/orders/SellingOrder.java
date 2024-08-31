@@ -1,7 +1,7 @@
-package com.globant.model.Orders;
+package com.globant.model.orders;
 
-import com.globant.model.System.Cryptocurrency;
-import com.globant.model.System.User;
+import com.globant.model.system.Cryptocurrency;
+import com.globant.model.system.User;
 
 import java.math.BigDecimal;
 

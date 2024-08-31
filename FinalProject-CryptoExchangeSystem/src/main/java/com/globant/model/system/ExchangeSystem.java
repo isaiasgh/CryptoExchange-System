@@ -1,6 +1,6 @@
-package com.globant.model.System;
+package com.globant.model.system;
 
-import com.globant.model.Orders.OrderBook;
+import com.globant.model.orders.OrderBook;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -22,11 +22,11 @@ public class ExchangeSystem implements Serializable {
     private final Cryptocurrency dogecoin = new Cryptocurrency("DOGE", "Dogecoin", "250");
 
     private ExchangeSystem () {
+        initializeCryptoCurrencies ();
+
         this.users = new ArrayList<>();
         this.orderBook = new OrderBook();
         this.idUserCounter = 0;
-
-        initializeCryptoCurrencies ();
     }
 
     public void initializeCryptoCurrencies () {

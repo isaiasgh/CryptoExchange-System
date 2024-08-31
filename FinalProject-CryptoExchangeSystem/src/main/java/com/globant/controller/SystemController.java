@@ -1,9 +1,8 @@
 package com.globant.controller;
 
-import com.globant.model.Finance.Wallet;
-import com.globant.model.System.Cryptocurrency;
-import com.globant.model.System.ExchangeSystem;
-import com.globant.model.System.User;
+import com.globant.model.system.Cryptocurrency;
+import com.globant.model.system.ExchangeSystem;
+import com.globant.model.system.User;
 import com.globant.service.*;
 import com.globant.util.BudgetCheckResult;
 import com.globant.view.AccountView;

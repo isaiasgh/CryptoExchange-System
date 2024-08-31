@@ -1,4 +1,4 @@
-package com.globant.model.System;
+package com.globant.model.system;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

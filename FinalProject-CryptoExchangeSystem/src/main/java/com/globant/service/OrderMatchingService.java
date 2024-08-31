@@ -1,21 +1,33 @@
 package com.globant.service;
 
-import com.globant.model.Orders.BuyOrder;
-import com.globant.model.Orders.Order;
-import com.globant.model.Orders.OrderBook;
-import com.globant.model.Orders.SellingOrder;
-import com.globant.model.System.ExchangeSystem;
-import com.globant.model.System.User;
+import com.globant.model.orders.BuyOrder;
+import com.globant.model.orders.Order;
+import com.globant.model.orders.OrderBook;
+import com.globant.model.orders.SellingOrder;
+import com.globant.model.system.Cryptocurrency;
+import com.globant.model.system.ExchangeSystem;
+import com.globant.model.system.User;
+import com.globant.service.fluctuation.PriceFluctuationContext;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OrderMatchingService implements Observer, Serializable {
     private static OrderMatchingService orderMatchingService;
 
-    private OrderMatchingService () {}
+    private Map<Cryptocurrency, Integer> matchCount = new HashMap<>();
+    private static final int FLUCTUATION_THRESHOLD = 5;
+    private PriceFluctuationContext fluctuationContext;
+
+    private OrderMatchingService () {
+        for (Map.Entry <Cryptocurrency, BigDecimal> entry : ExchangeSystem.getInstance().getCryptocurrencies().entrySet()) {
+            matchCount.put(entry.getKey(), 0);
+        }
+    }
 
     public static OrderMatchingService getInstance () {
         if (orderMatchingService == null) {
@@ -85,6 +97,7 @@ public class OrderMatchingService implements Observer, Serializable {
         orderBook.removeSellingOrder (sellingOrder);
 
         financeService.generateTransaction(buyer, seller, amount, price, buyOrder.getCryptocurrencyType());
+        incrementMatchCount(buyOrder.getCryptocurrencyType());
         ExchangeSystemService.write();
     }
 
@@ -97,5 +110,23 @@ public class OrderMatchingService implements Observer, Serializable {
         if (order instanceof SellingOrder) {
             matchSellingOrder((SellingOrder) order);
         }
+    }
+
+    private void incrementMatchCount(Cryptocurrency crypto) {
+        int currentCounter = matchCount.get(crypto);
+        currentCounter++;
+        matchCount.put(crypto, currentCounter);
+        if (currentCounter == FLUCTUATION_THRESHOLD) {
+            updatePrices(crypto);
+            matchCount.put(crypto, 0);
+        }
+    }
+
+    private void updatePrices(Cryptocurrency crypto) {
+
+    }
+
+    private Object readResolve() {
+        return getInstance();
     }
 }

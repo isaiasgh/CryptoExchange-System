@@ -1,6 +1,6 @@
 package com.globant.controller;
 
-import com.globant.model.System.User;
+import com.globant.model.system.User;
 import com.globant.service.ExchangeSystemService;
 import com.globant.service.UnknownAccountException;
 import com.globant.service.UserService;
