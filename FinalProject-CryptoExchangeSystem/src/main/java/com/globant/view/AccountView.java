@@ -3,7 +3,6 @@ package com.globant.view;
 import com.globant.model.Finance.Transaction;
 import com.globant.model.Finance.Wallet;
 import com.globant.model.Orders.BuyOrder;
-import com.globant.model.Orders.Order;
 import com.globant.model.Orders.OrderBook;
 import com.globant.model.Orders.SellingOrder;
 import com.globant.model.System.Cryptocurrency;
@@ -13,7 +12,8 @@ import com.globant.service.FinanceService;
 import com.globant.service.OrderBookService;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 public class AccountView extends View {
     public void displayAccountMenu () {
@@ -73,45 +73,73 @@ public class AccountView extends View {
     }
 
     public boolean displayActiveOrders(OrderBook orderBook, User user) {
-        List<BuyOrder> buyOrders = orderBook.getBuyOrders();
-        List<SellingOrder> sellingOrders = orderBook.getSellingOrders();
-
         boolean hasActiveOrders = false;
 
-        if (!buyOrders.isEmpty()) {
-            super.showInfo("Active Buy Orders:");
+        if (!orderBook.getBuyOrders().isEmpty()) {
+            displayActiveBuyOrders(orderBook, user);
             hasActiveOrders = true;
-            for (BuyOrder buyOrder : buyOrders) {
-                if (buyOrder.getOwner().equals(user)) {
-                    System.out.println("Buy Order ID: " + buyOrder.getID());
-                    System.out.println("Cryptocurrency: " + buyOrder.getCryptocurrencyType().getName());
-                    System.out.println("Maximum Price: $" + buyOrder.getMaximumPrice());
-                    System.out.println("Amount: " + buyOrder.getAmount() + " " + buyOrder.getCryptocurrencyType().getShorthandSymbol());
-                    System.out.println("Status: Active");
-                    System.out.println(ANSI_BLUE + "----------" + ANSI_RESET);
-                }
-            }
         }
 
-        if (!sellingOrders.isEmpty()) {
-            super.showInfo("Active Selling Orders:");
+        if (!orderBook.getSellingOrders().isEmpty()) {
+            displayActiveSellingOrders(orderBook, user);
             hasActiveOrders = true;
-            for (SellingOrder sellingOrder : sellingOrders) {
-                if (sellingOrder.getOwner().equals(user)) {
-                    System.out.println("Selling Order ID: " + sellingOrder.getID());
-                    System.out.println("Cryptocurrency: " + sellingOrder.getCryptocurrencyType().getName());
-                    System.out.println("Minimum Price: $" + sellingOrder.getMinimumPrice());
-                    System.out.println("Amount: " + sellingOrder.getAmount() + " " + sellingOrder.getCryptocurrencyType().getShorthandSymbol());
-                    System.out.println("Status: Active");
-                    System.out.println(ANSI_BLUE + "----------" + ANSI_RESET);
-                }
-            }
         }
 
         if (!hasActiveOrders) {
-            super.showInfo("No active orders found.");
+            super.showInfo(ANSI_YELLOW + "No active orders found." + ANSI_RESET);
         }
+
         return hasActiveOrders;
+    }
+
+    private void displayActiveSellingOrders(OrderBook orderBook, User user) {
+        List<SellingOrder> sellingOrders = orderBook.getSellingOrders();
+
+        if (!sellingOrders.isEmpty()) {
+            super.showInfo(ANSI_BLUE + "Active Selling Orders:" + ANSI_RESET);
+            for (SellingOrder sellingOrder : sellingOrders) {
+                if (sellingOrder.getOwner().equals(user)) {
+                    System.out.printf(
+                            "  Selling Order ID: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
+                                    "  Cryptocurrency: " + "%s\n" +
+                                    "  Minimum Price: " + ANSI_GREEN + "$%s\n" + ANSI_RESET +
+                                    "  Amount: " + "%s %s\n" +
+                                    "  Status: " + ANSI_YELLOW + "Active\n" + ANSI_RESET,
+                            sellingOrder.getID(),
+                            sellingOrder.getCryptocurrencyType().getName(),
+                            sellingOrder.getMinimumPrice(),
+                            sellingOrder.getAmount(),
+                            sellingOrder.getCryptocurrencyType().getShorthandSymbol()
+                    );
+                    System.out.println(ANSI_BLUE + "  ----------" + ANSI_RESET);
+                }
+            }
+        }
+    }
+
+    private void displayActiveBuyOrders(OrderBook orderBook, User user) {
+        List<BuyOrder> buyOrders = orderBook.getBuyOrders();
+
+        if (!buyOrders.isEmpty()) {
+            super.showInfo(ANSI_BLUE + "Active Buy Orders:" + ANSI_RESET);
+            for (BuyOrder buyOrder : buyOrders) {
+                if (buyOrder.getOwner().equals(user)) {
+                    System.out.printf(
+                            "  Buy Order ID: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
+                                    "  Cryptocurrency: " + "%s\n" +
+                                    "  Maximum Price: " + ANSI_GREEN + "$%s\n" + ANSI_RESET +
+                                    "  Amount: " + "%s %s\n" +
+                                    "  Status: " + ANSI_YELLOW + "Active\n" + ANSI_RESET,
+                            buyOrder.getID(),
+                            buyOrder.getCryptocurrencyType().getName(),
+                            buyOrder.getMaximumPrice(),
+                            buyOrder.getAmount(),
+                            buyOrder.getCryptocurrencyType().getShorthandSymbol()
+                    );
+                    System.out.println(ANSI_BLUE + "  ----------" + ANSI_RESET);
+                }
+            }
+        }
     }
 
     public void showCancelOrderMenu() {

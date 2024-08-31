@@ -36,16 +36,16 @@ public class OrderBookService {
         return fiatAmount;
     }
 
-    public void createBuyOrder (Cryptocurrency crypto, BigDecimal amount, BigDecimal maximumPrice, User owner) {
+    public Order createBuyOrder (Cryptocurrency crypto, BigDecimal amount, BigDecimal maximumPrice, User owner) {
         int id = ExchangeSystem.getInstance().getOrderBook().getNextOrderID();
         BuyOrder newBuyOrder = new BuyOrder(crypto, amount, maximumPrice, owner, id);
-        ExchangeSystem.getInstance().getOrderBook().addOrder(newBuyOrder);
+        return ExchangeSystem.getInstance().getOrderBook().addOrder(newBuyOrder);
     }
 
-    public void createSellingOrder (Cryptocurrency crypto, BigDecimal amount, BigDecimal minimumPrice, User owner) {
+    public Order createSellingOrder (Cryptocurrency crypto, BigDecimal amount, BigDecimal minimumPrice, User owner) {
         int id = ExchangeSystem.getInstance().getOrderBook().getNextOrderID();
         SellingOrder newSellingOrder = new SellingOrder(crypto, amount, minimumPrice, owner, id);
-        ExchangeSystem.getInstance().getOrderBook().addOrder(newSellingOrder);
+        return ExchangeSystem.getInstance().getOrderBook().addOrder(newSellingOrder);
     }
 
     public Order getOrderSelected (int id) {

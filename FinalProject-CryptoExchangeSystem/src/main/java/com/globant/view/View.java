@@ -1,9 +1,6 @@
 package com.globant.view;
 
-import com.globant.model.Finance.Wallet;
 import com.globant.model.System.Cryptocurrency;
-import com.globant.model.System.User;
-import com.globant.service.OrderBookService;
 
 import java.math.BigDecimal;
 import java.util.InputMismatchException;
@@ -90,6 +87,10 @@ public class View {
 
     public void showInfo(String message) {
         System.out.println(ANSI_BLUE + message + ANSI_RESET);
+    }
+
+    public void showWarning(String message) {
+        System.out.println(ANSI_YELLOW + message + ANSI_RESET);
     }
 
     public void close() {

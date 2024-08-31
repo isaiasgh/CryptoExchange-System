@@ -21,7 +21,7 @@ public class OrderBook implements Serializable {
         attach(OrderMatchingService.getInstance());
     }
 
-    public boolean addOrder (Order order) {
+    public Order addOrder (Order order) {
         if (order instanceof  BuyOrder) {
             return addBuyOrder((BuyOrder) order);
         }
@@ -29,7 +29,7 @@ public class OrderBook implements Serializable {
         if (order instanceof SellingOrder) {
             return addSellingOrder((SellingOrder) order);
         }
-        return false;
+        return null;
     }
 
     public int getNextOrderID () {
@@ -51,16 +51,16 @@ public class OrderBook implements Serializable {
         return true;
     }
 
-    public boolean addBuyOrder (BuyOrder buyOrder) {
+    private BuyOrder addBuyOrder (BuyOrder buyOrder) {
         buyOrders.add(buyOrder);
         notifyObservers(buyOrder);
-        return true;
+        return buyOrder;
     }
 
-    public boolean addSellingOrder (SellingOrder sellingOrder) {
+    private SellingOrder addSellingOrder (SellingOrder sellingOrder) {
         sellingOrders.add(sellingOrder);
         notifyObservers(sellingOrder);
-        return true;
+        return sellingOrder;
     }
 
     public void notifyObservers(Order order) {

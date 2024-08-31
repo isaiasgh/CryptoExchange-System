@@ -1,6 +1,8 @@
 package com.globant.controller;
 
+import com.globant.model.Orders.BuyOrder;
 import com.globant.model.Orders.Order;
+import com.globant.model.Orders.SellingOrder;
 import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
@@ -52,8 +54,8 @@ public class ManageOrderController {
                     result = financeService.handleEnoughFiatBudget (maximumPrice, user);
 
                     if (result.isSuccess()) {
-                        orderBookService.createBuyOrder(crypto, amount, maximumPrice, user);
-                        placeOrderView.displayBuyOrderConfirmation(crypto, amount, maximumPrice, user);
+                        BuyOrder buyOrder = (BuyOrder) orderBookService.createBuyOrder(crypto, amount, maximumPrice, user);
+                        placeOrderView.displayBuyOrderConfirmation(buyOrder);
                         ExchangeSystemService.write();
                     } else placeOrderView.showError(result.getErrorMessage());
 
@@ -78,10 +80,10 @@ public class ManageOrderController {
                     if (result.isSuccess()) {
                         BigDecimal minimumPrice = placeOrderView.getBigDecimalInput("Enter the minimum price you want tu sell: ");
                         if (!isValidAmount(minimumPrice)) break;
-                        orderBookService.createSellingOrder(crypto, amount, minimumPrice, user);
-                        placeOrderView.displaySellingOrderConfirmation(crypto, amount, minimumPrice, user);
+                        SellingOrder sellingOrder = (SellingOrder) orderBookService.createSellingOrder(crypto, amount, minimumPrice, user);
+                        placeOrderView.displaySellingOrderConfirmation(sellingOrder);
                         ExchangeSystemService.write();
-                    }
+                    } else placeOrderView.showError(result.getErrorMessage());
 
                     break;
                 case 3:
