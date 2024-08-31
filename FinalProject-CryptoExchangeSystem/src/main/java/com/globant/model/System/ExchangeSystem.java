@@ -17,6 +17,10 @@ public class ExchangeSystem implements Serializable {
     private OrderBook orderBook;
     private int idUserCounter;
 
+    private final Cryptocurrency bitcoin = new Cryptocurrency("BTN", "Bitcoin", "50000");
+    private final Cryptocurrency ethereum = new Cryptocurrency("ETH", "Ethereum", "3000");
+    private final Cryptocurrency dogecoin = new Cryptocurrency("DOGE", "Dogecoin", "250");
+
     private ExchangeSystem () {
         this.users = new ArrayList<>();
         this.orderBook = new OrderBook();
@@ -26,10 +30,6 @@ public class ExchangeSystem implements Serializable {
     }
 
     public void initializeCryptoCurrencies () {
-        Cryptocurrency bitcoin = new Cryptocurrency("BTN", "Bitcoin", "50000");
-        Cryptocurrency ethereum = new Cryptocurrency("ETH", "Ethereum", "3000");
-        Cryptocurrency dogecoin = new Cryptocurrency("DOGE", "Dogecoin", "250");
-
         cryptocurrencies.put(bitcoin, new BigDecimal("100"));
         cryptocurrencies.put(ethereum, new BigDecimal("500"));
         cryptocurrencies.put(dogecoin, new BigDecimal("1500"));
@@ -82,7 +82,7 @@ public class ExchangeSystem implements Serializable {
 
     public Cryptocurrency getCryptocurrencyByShorthandSymbol (String shortHandSymbol) {
         for (Map.Entry <Cryptocurrency, BigDecimal> entry : cryptocurrencies.entrySet()) {
-            if (entry.getKey().getShortHandSymbol().equals(shortHandSymbol)) return entry.getKey();
+            if (entry.getKey().getShorthandSymbol().equals(shortHandSymbol)) return entry.getKey();
         }
         return null;
     }
@@ -98,12 +98,38 @@ public class ExchangeSystem implements Serializable {
         for (Map.Entry <Cryptocurrency, BigDecimal> crypto : cryptocurrencies.entrySet()) {
             if (crypto.getValue().compareTo(new BigDecimal("0")) != 0) {
                 info += crypto.getKey().toString();
-                info += "\nAvailable amount: " + crypto.getValue() + " " + crypto.getKey().getShortHandSymbol();
+                info += "\nAvailable amount: " + crypto.getValue() + " " + crypto.getKey().getShorthandSymbol();
                 listInfo.add(info);
                 info = "";
             }
         }
         return listInfo;
+    }
+
+    public List <Cryptocurrency> getCryptos () {
+        List <Cryptocurrency> cryptos = new ArrayList<>();
+
+        for (Map.Entry <Cryptocurrency, BigDecimal> crypto : cryptocurrencies.entrySet()) {
+            cryptos.add(crypto.getKey());
+        }
+
+        return cryptos;
+    }
+
+    public Cryptocurrency getDogecoin() {
+        return dogecoin;
+    }
+
+    public Cryptocurrency getEthereum() {
+        return ethereum;
+    }
+
+    public Cryptocurrency getBitcoin() {
+        return bitcoin;
+    }
+
+    public OrderBook getOrderBook() {
+        return orderBook;
     }
 
     public static void setInstance (ExchangeSystem instance) {

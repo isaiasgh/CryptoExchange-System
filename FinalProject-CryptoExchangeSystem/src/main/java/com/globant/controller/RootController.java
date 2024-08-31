@@ -17,7 +17,7 @@ public class RootController {
 
         while (true) {
             view.displayInitialMenu ();
-            int choice = view.getUserChoice (3);
+            int choice = view.getUserChoice (1, 3);
             switch (choice) {
                 case 1:
                     accountController.handleLogIn();

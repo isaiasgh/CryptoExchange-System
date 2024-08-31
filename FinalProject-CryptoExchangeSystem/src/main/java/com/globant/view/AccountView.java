@@ -1,6 +1,11 @@
 package com.globant.view;
 
+import com.globant.model.Finance.Transaction;
 import com.globant.model.Finance.Wallet;
+import com.globant.model.Orders.BuyOrder;
+import com.globant.model.Orders.Order;
+import com.globant.model.Orders.OrderBook;
+import com.globant.model.Orders.SellingOrder;
 import com.globant.model.System.Cryptocurrency;
 import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
@@ -15,8 +20,9 @@ public class AccountView extends View {
         System.out.println("[2] View Wallet Balance");
         System.out.println("[3] Buy Cryptocurrencies from Exchange System");
         System.out.println("[4] Place Order");
-        System.out.println("[5] View Transaction history");
-        System.out.println("[6] Logout");
+        System.out.println("[5] Check my active orders");
+        System.out.println("[6] View Transaction history");
+        System.out.println("[7] Logout");
     }
 
     public void displayPurchaseConfirmation(User user, Wallet wallet, Cryptocurrency crypto, BigDecimal amountPurchased, BigDecimal totalCost) {
@@ -31,35 +37,90 @@ public class AccountView extends View {
         BigDecimal updatedCryptoBalance = wallet.getCryptocurrenciesBalance().get(crypto);
         System.out.printf(message,
                 user.getId(),
-                crypto.getShortHandSymbol(),
+                crypto.getShorthandSymbol(),
                 amountPurchased,
-                crypto.getShortHandSymbol(),
+                crypto.getShorthandSymbol(),
                 totalCost,
                 wallet.getFiatMoneyBalance(),
-                crypto.getShortHandSymbol(),
+                crypto.getShorthandSymbol(),
                 updatedCryptoBalance,
-                crypto.getShortHandSymbol());
+                crypto.getShorthandSymbol());
     }
 
-    public BigDecimal getAmountInput() {
-        try {
-            System.out.print("Enter the amount: ");
-            return scanner.nextBigDecimal();
-        } catch (InputMismatchException e) {
-            super.showError("Invalid amount format. Please enter a valid number or type 0 to cancel");
-            scanner.nextLine();
-            return getAmountInput();
+    public void displayTransactions (User user) {
+        List<Transaction> transactions = user.getTransactions();
+
+        if (transactions.isEmpty()) {
+            super.showInfo("No transactions found.");
+            return;
+        }
+
+        super.showInfo("Transaction History for " + user.getName() + ":");
+
+        for (Transaction transaction : transactions) {
+            System.out.println("Transaction ID: " + transaction.getID());
+            System.out.println("Type: " + transaction.getType());
+            System.out.println("Amount: " + transaction.getAmountTraded() + " " + transaction.getCryptocurrency().getShorthandSymbol());
+            if (transaction.getType().equals('B')) {
+                System.out.println("Price payed: $" + transaction.getPrice());
+            } else {
+                System.out.println("Price received: $" + transaction.getPrice());
+            }
+            System.out.println(ANSI_BLUE + "----------" + ANSI_RESET);
         }
     }
 
-    public String getSelectedCrypto() {
-        System.out.print("Enter the shorthand symbol: ");
-        return scanner.next().toUpperCase();
+    public boolean displayActiveOrders(OrderBook orderBook, User user) {
+        List<BuyOrder> buyOrders = orderBook.getBuyOrders();
+        List<SellingOrder> sellingOrders = orderBook.getSellingOrders();
+
+        boolean hasActiveOrders = false;
+
+        if (!buyOrders.isEmpty()) {
+            super.showInfo("Active Buy Orders:");
+            hasActiveOrders = true;
+            for (BuyOrder buyOrder : buyOrders) {
+                if (buyOrder.getOwner().equals(user)) {
+                    System.out.println("Buy Order ID: " + buyOrder.getID());
+                    System.out.println("Cryptocurrency: " + buyOrder.getCryptocurrencyType().getName());
+                    System.out.println("Maximum Price: $" + buyOrder.getMaximumPrice());
+                    System.out.println("Amount: " + buyOrder.getAmount() + " " + buyOrder.getCryptocurrencyType().getShorthandSymbol());
+                    System.out.println("Status: Active");
+                    System.out.println(ANSI_BLUE + "----------" + ANSI_RESET);
+                }
+            }
+        }
+
+        if (!sellingOrders.isEmpty()) {
+            super.showInfo("Active Selling Orders:");
+            hasActiveOrders = true;
+            for (SellingOrder sellingOrder : sellingOrders) {
+                if (sellingOrder.getOwner().equals(user)) {
+                    System.out.println("Selling Order ID: " + sellingOrder.getID());
+                    System.out.println("Cryptocurrency: " + sellingOrder.getCryptocurrencyType().getName());
+                    System.out.println("Minimum Price: $" + sellingOrder.getMinimumPrice());
+                    System.out.println("Amount: " + sellingOrder.getAmount() + " " + sellingOrder.getCryptocurrencyType().getShorthandSymbol());
+                    System.out.println("Status: Active");
+                    System.out.println(ANSI_BLUE + "----------" + ANSI_RESET);
+                }
+            }
+        }
+
+        if (!hasActiveOrders) {
+            super.showInfo("No active orders found.");
+        }
+        return hasActiveOrders;
+    }
+
+    public void showCancelOrderMenu() {
+        super.showInfo("Would you like to cancel any orders?");
+        System.out.println("[1] Yes");
+        System.out.println("[2] No");
     }
 
     public void displayCryptocurrenciesInfo () {
         super.showInfo("Cryptocurrencies: ");
-        List <String> listInfo = ExchangeSystem.getInstance().getCryptosInfo();
+        List<String> listInfo = ExchangeSystem.getInstance().getCryptosInfo();
 
         for (String s : listInfo) {
             System.out.println(ANSI_BLUE + "========================================================" + ANSI_RESET);
@@ -67,10 +128,6 @@ public class AccountView extends View {
         }
 
         System.out.println(ANSI_BLUE + "========================================================" + ANSI_RESET);
-    }
-
-    public void displayCancelationMessage(String subject) {
-        super.showInfo(subject + " has been canceled");
     }
 
     public void displayDepositConfirmation(User user, Wallet wallet) {
@@ -88,7 +145,7 @@ public class AccountView extends View {
 
         for (Map.Entry<Cryptocurrency, BigDecimal> entry : wallet.getCryptocurrenciesBalance().entrySet()) {
             if (entry.getValue().compareTo(BigDecimal.ZERO) > 0) {
-                message += entry.getKey().getShortHandSymbol() + " Balance: %s\n";
+                message += entry.getKey().getShorthandSymbol() + " Balance: %s\n";
                 ref.add(entry.getValue());
             }
         }

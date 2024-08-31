@@ -1,6 +1,5 @@
 package com.globant.controller;
 
-import com.globant.model.System.ExchangeSystem;
 import com.globant.model.System.User;
 import com.globant.service.ExchangeSystemService;
 import com.globant.service.UnknownAccountException;
@@ -11,7 +10,6 @@ public class AccountController {
     private MainView view;
     private UserService userService = new UserService ();
     private SystemController systemController;
-
 
     public AccountController (MainView view) {
         this.view = view;
@@ -50,13 +48,13 @@ public class AccountController {
     }
 
     public void handleEmailUsed () {
+        view.retryEmailInput();
         while (true) {
-            view.retryEmailInput();
-            int choice = view.getUserChoice (2);
+            int choice = view.getUserChoice (1, 2);
             switch (choice) {
                 case 1:
                     handleRegister ();
-                    break;
+                    return;
                 case 2:
                     return;
                 default:
