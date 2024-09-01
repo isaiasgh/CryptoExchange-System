@@ -105,7 +105,7 @@ public class ExchangeSystem implements Serializable {
         return listInfo;
     }
 
-    public List <Cryptocurrency> getCryptos () {
+    public List <Cryptocurrency> getCryptocurrenciesList () {
         List <Cryptocurrency> cryptos = new ArrayList<>();
 
         for (Map.Entry <Cryptocurrency, BigDecimal> crypto : cryptocurrencies.entrySet()) {

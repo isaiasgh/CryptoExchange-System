@@ -65,8 +65,8 @@ public class AccountView extends View {
 
             System.out.printf(
                     "  Transaction ID: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
-                            "  Type: " + "%s\n" +
-                            "  Amount: " + ANSI_BLUE + "%s %s\n" + ANSI_RESET +
+                            "  Type: " + ANSI_YELLOW + "%s\n" + ANSI_RESET +
+                            "  Amount: " + "%s %s\n" +
                             "  Price: " + priceColor + "$%s\n" + ANSI_RESET +
                             "  Cryptocurrency: " + "%s\n" +
                             ANSI_BLUE + "  ------------------------------------------------------------\n" + ANSI_RESET,
@@ -119,7 +119,7 @@ public class AccountView extends View {
                             sellingOrder.getAmount(),
                             sellingOrder.getCryptocurrencyType().getShorthandSymbol()
                     );
-                    System.out.println(ANSI_BLUE + "  ------------------------------------------------------------" + ANSI_RESET);
+                    System.out.println(ANSI_BLUE + "  -------------------" + ANSI_RESET);
                 }
             }
         }
@@ -144,7 +144,7 @@ public class AccountView extends View {
                             buyOrder.getAmount(),
                             buyOrder.getCryptocurrencyType().getShorthandSymbol()
                     );
-                    System.out.println(ANSI_BLUE + "  ------------------------------------------------------------" + ANSI_RESET);
+                    System.out.println(ANSI_BLUE + "  -------------------" + ANSI_RESET);
                 }
             }
         }
@@ -156,16 +156,33 @@ public class AccountView extends View {
         System.out.println("[2] No");
     }
 
-    public void displayCryptocurrenciesInfo () {
-        super.showInfo("Cryptocurrencies: ");
-        List<String> listInfo = ExchangeSystem.getInstance().getCryptosInfo();
+    public void displayCryptocurrenciesInfo() {
+        super.showInfo(ANSI_BLUE + "Cryptocurrencies Info:" + ANSI_RESET);
 
-        for (String s : listInfo) {
-            System.out.println(ANSI_BLUE + "========================================================" + ANSI_RESET);
-            System.out.println(s);
+        List<Cryptocurrency> cryptos = ExchangeSystem.getInstance().getCryptocurrenciesList();
+
+        if (cryptos.isEmpty()) {
+            showError("No cryptocurrencies available.");
+            return;
         }
 
-        System.out.println(ANSI_BLUE + "========================================================" + ANSI_RESET);
+        System.out.printf(
+                ANSI_BLUE + "%-40s %-10s %-15s %-15s\n" + ANSI_RESET,
+                "ID", "Name", "Symbol", "Market Price"
+        );
+        System.out.println(ANSI_BLUE + "----------------------------------------------------------------------------------------" + ANSI_RESET);
+
+        for (Cryptocurrency crypto : cryptos) {
+            System.out.printf(
+                    "%-40s %-10s %-15s $%-14s\n",
+                    crypto.getUniqueID(),
+                    crypto.getName(),
+                    crypto.getShorthandSymbol(),
+                    crypto.getMarketPrice()
+            );
+        }
+
+        System.out.println(ANSI_BLUE + "----------------------------------------------------------------------------------------" + ANSI_RESET);
     }
 
     public void displayDepositConfirmation(User user, Wallet wallet) {
