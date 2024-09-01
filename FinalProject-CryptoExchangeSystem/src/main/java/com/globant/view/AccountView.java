@@ -49,26 +49,34 @@ public class AccountView extends View {
                 crypto.getShorthandSymbol());
     }
 
-    public void displayTransactions (User user) {
+    public void displayTransactions(User user) {
         List<Transaction> transactions = user.getTransactions();
 
         if (transactions.isEmpty()) {
-            super.showInfo("No transactions found.");
+            super.showInfo(ANSI_BLUE + "No transactions found." + ANSI_RESET);
             return;
         }
 
-        super.showInfo("Transaction History for " + user.getName() + ":");
+        super.showInfo(ANSI_BLUE + "Transaction History for " + user.getName() + ":" + ANSI_RESET);
 
         for (Transaction transaction : transactions) {
-            System.out.println("Transaction ID: " + transaction.getID());
-            System.out.println("Type: " + transaction.getType());
-            System.out.println("Amount: " + transaction.getAmountTraded() + " " + transaction.getCryptocurrency().getShorthandSymbol());
-            if (transaction.getType().equals('B')) {
-                System.out.println("Price payed: $" + transaction.getPrice());
-            } else {
-                System.out.println("Price received: $" + transaction.getPrice());
-            }
-            System.out.println(ANSI_BLUE + "----------" + ANSI_RESET);
+            String priceColor = transaction.getType().equals('B') ? ANSI_GREEN : ANSI_RED;
+            String type = transaction.getType().equals('B') ? "Buy" : "Sell";
+
+            System.out.printf(
+                    "  Transaction ID: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
+                            "  Type: " + "%s\n" +
+                            "  Amount: " + ANSI_BLUE + "%s %s\n" + ANSI_RESET +
+                            "  Price: " + priceColor + "$%s\n" + ANSI_RESET +
+                            "  Cryptocurrency: " + "%s\n" +
+                            ANSI_BLUE + "  ------------------------------------------------------------\n" + ANSI_RESET,
+                    transaction.getID(),
+                    type,
+                    transaction.getAmountTraded(),
+                    transaction.getCryptocurrency().getShorthandSymbol(),
+                    transaction.getPrice(),
+                    transaction.getCryptocurrency().getName()
+            );
         }
     }
 
@@ -111,7 +119,7 @@ public class AccountView extends View {
                             sellingOrder.getAmount(),
                             sellingOrder.getCryptocurrencyType().getShorthandSymbol()
                     );
-                    System.out.println(ANSI_BLUE + "  ----------" + ANSI_RESET);
+                    System.out.println(ANSI_BLUE + "  ------------------------------------------------------------" + ANSI_RESET);
                 }
             }
         }
@@ -136,7 +144,7 @@ public class AccountView extends View {
                             buyOrder.getAmount(),
                             buyOrder.getCryptocurrencyType().getShorthandSymbol()
                     );
-                    System.out.println(ANSI_BLUE + "  ----------" + ANSI_RESET);
+                    System.out.println(ANSI_BLUE + "  ------------------------------------------------------------" + ANSI_RESET);
                 }
             }
         }
