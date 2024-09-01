@@ -5,10 +5,10 @@
 1. [Project Overview](#1-project-overview)
 2. [Use Cases Implemented](#2-use-cases-implemented)
 3. [Constraints and Design Decisions](#3-constraints-and-design-decisions)
-4. [Exchange System Configuration](#4-exchange-system-configuration)
-5. [Project Structure](#5-project-structure)
-6. [Design Patterns Used](#6-design-patterns-used)
-7. [UML Diagrams](#7-uml-diagrams)
+4. [Design Patterns Used](#4-design-patterns-used)
+5. [Exchange System Configuration](#5-exchange-system-configuration)
+6. [UML Diagrams](#6-uml-diagrams)
+7. [Project Structure](#7-project-structure)
 
 ### 1. **Project Overview**
    This project simulates a cryptocurrency exchange system developed in Java. It allows users to manage their wallet, place buy and sell orders for cryptocurrencies, and execute transactions within a controlled environment.
@@ -35,7 +35,26 @@
 
         2. **Random Price Fluctuation Strategy** (`RandomPriceFluctuationStrategy`): This strategy changes prices at random intervals, mimicking the unpredictable nature of real-world cryptocurrency markets. Although the intervals are random, users can still set how frequently the price updates, based on the number of matched orders.
 
-### 4. **Exchange System Configuration**
+### 4. **Design Patterns Used**
+
+- **Observer Pattern**: 
+  - **Purpose**: Used for the order matching process.
+  - **Components**:
+    - **Subject**: `OrderBook` - Manages the list of orders and notifies observers when changes occur.
+    - **Observer**: `OrderMatchingService` - Reacts to changes in the `OrderBook` and performs order matching.
+
+- **Strategy Pattern**: 
+  - **Purpose**: Defines different strategies for cryptocurrency price fluctuation.
+  - **Components**: 
+    - **Strategies**: `MatchBasedPriceFluctuationStrategy` and `RandomPriceFluctuationStrategy` - Implement different algorithms for price changes based on user configuration.
+
+- **Singleton Pattern**:
+  - **Purpose**: Ensures a single instance of a class is created and used throughout the application.
+  - **Components**:
+    - **`ExchangeSystem`**: Manages the global state of the exchange, including users and cryptocurrencies.
+    - **`OrderMatchingService`**: Ensures only one instance manages the order matching process. *(Note: This is less central compared to the others.)*
+
+### 5. **Exchange System Configuration**
 
 Users can set up the `ExchangeSystem` to choose the fluctuation strategy and decide how often prices are updated. This is configured in the `ExchangeApplication` class before running the system.
 
@@ -66,7 +85,20 @@ rootController.configureSystem(new RandomPriceFluctuationStrategy(), 2);
 
 This allows for random price changes while still setting the frequency of updates.
 
-### 5. **Project Structure**
+### 6. **UML Diagrams**
+
+#### Model UML Class Diagram
+The model class diagram provides a detailed view of the core entities and their relationships within the system.
+
+- **Model Class Diagram**: ![Model UML Class Diagram](docs/UML%20Diagrams/model-diagram.jpeg)
+
+#### Other Diagrams
+Additional UML diagrams for the service and controller layers are also available for reference.
+
+- **Service Class Diagram**: ![Service UML Class Diagram](docs/UML%20Diagrams/service-diagram.jpeg)
+- **Controller Class Diagram**: ![Controller UML Class Diagram](docs/UML%20Diagrams/controller-diagram.jpeg)
+
+### 7. **Project Structure**
 
 The project is organized into several packages and directories to maintain a clean and manageable codebase. Below is an overview of the project structure:
 
@@ -84,35 +116,3 @@ The project is organized into several packages and directories to maintain a cle
     - `model-diagram.jpg`: UML diagram for the model classes.
     - `service-diagram.jpg`: UML diagram for the service classes.
     - `controller-diagram.jpg`: UML diagram for the controller classes.
-
-### 6. **Design Patterns Used**
-
-- **Observer Pattern**: 
-  - **Purpose**: Used for the order matching process.
-  - **Components**:
-    - **Subject**: `OrderBook` - Manages the list of orders and notifies observers when changes occur.
-    - **Observer**: `OrderMatchingService` - Reacts to changes in the `OrderBook` and performs order matching.
-
-- **Strategy Pattern**: 
-  - **Purpose**: Defines different strategies for cryptocurrency price fluctuation.
-  - **Components**: 
-    - **Strategies**: `MatchBasedPriceFluctuationStrategy` and `RandomPriceFluctuationStrategy` - Implement different algorithms for price changes based on user configuration.
-
-- **Singleton Pattern**:
-  - **Purpose**: Ensures a single instance of a class is created and used throughout the application.
-  - **Components**:
-    - **`ExchangeSystem`**: Manages the global state of the exchange, including users and cryptocurrencies.
-    - **`OrderMatchingService`**: Ensures only one instance manages the order matching process. *(Note: This is less central compared to the others.)*
-
-### 7. **UML Diagrams**
-
-#### Model UML Class Diagram
-The model class diagram provides a detailed view of the core entities and their relationships within the system.
-
-- **Model Class Diagram**: ![Model UML Class Diagram](docs/UML%20Diagrams/model-diagram.jpeg)
-
-#### Other Diagrams
-Additional UML diagrams for the service and controller layers are also available for reference.
-
-- **Service Class Diagram**: ![Service UML Class Diagram](docs/UML%20Diagrams/service-diagram.jpeg)
-- **Controller Class Diagram**: ![Controller UML Class Diagram](docs/UML%20Diagrams/controller-diagram.jpeg)
