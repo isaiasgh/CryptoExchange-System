@@ -16,7 +16,9 @@ import com.globant.util.BudgetCheckResult;
 import java.math.BigDecimal;
 
 public class FinanceService {
-    public boolean deposit (User user, BigDecimal amount) {
+    private User user;
+
+    public boolean deposit (BigDecimal amount) {
         Wallet wallet = user.getWallet();
         wallet.addFiatMoney(amount);
         return true;
@@ -26,7 +28,7 @@ public class FinanceService {
         return ExchangeSystem.getInstance().getCryptocurrencyByShorthandSymbol(shorthandSymbol);
     }
 
-    private boolean checkEnoughFiatFunds(Wallet wallet, BigDecimal amount, User user) {
+    private boolean checkEnoughFiatFunds(Wallet wallet, BigDecimal amount) {
         BigDecimal totalFiatAmount = wallet.getFiatMoneyBalance();
         BigDecimal fiatAmountInBuyingOrders = OrderBookService.fiatAmountInBuyOrders (wallet, user);
 
@@ -41,7 +43,7 @@ public class FinanceService {
         return true;
     }
 
-    private boolean checkEnoughCryptoFunds(Wallet wallet, BigDecimal amount, Cryptocurrency crypto, User user) {
+    private boolean checkEnoughCryptoFunds(Wallet wallet, BigDecimal amount, Cryptocurrency crypto) {
         BigDecimal totalCryptoAmount = wallet.getCryptocurrenciesBalance().get(crypto);
         BigDecimal cryptoAmountInSellingOrders = OrderBookService.cryptoAmountInSellingOrders (crypto, wallet, user);
 
@@ -56,9 +58,9 @@ public class FinanceService {
         return true;
     }
 
-    public BudgetCheckResult handleEnoughFiatBudget(BigDecimal amount, User user) {
+    public BudgetCheckResult handleEnoughFiatBudget(BigDecimal amount) {
         try {
-            boolean hasEnoughFunds = checkEnoughFiatFunds(user.getWallet(), amount, user);
+            boolean hasEnoughFunds = checkEnoughFiatFunds(user.getWallet(), amount);
             return new BudgetCheckResult(hasEnoughFunds, null);
         } catch (InsufficientFundsException e) {
             return new BudgetCheckResult(false, "ERROR: You do not have enough funds in your account to place this buy order. Please try again later.");
@@ -67,9 +69,9 @@ public class FinanceService {
         }
     }
 
-    public BudgetCheckResult handleEnoughCryptoBudget(BigDecimal amount, Cryptocurrency crypto, User user) {
+    public BudgetCheckResult handleEnoughCryptoBudget(BigDecimal amount, Cryptocurrency crypto) {
         try {
-            boolean hasEnoughCrypto = checkEnoughCryptoFunds(user.getWallet(), amount, crypto, user);
+            boolean hasEnoughCrypto = checkEnoughCryptoFunds(user.getWallet(), amount, crypto);
             return new BudgetCheckResult(hasEnoughCrypto, null);
         } catch (InsufficientFundsException e) {
             return new BudgetCheckResult(false, "ERROR: You do not have enough cryptocurrency in your account to place this selling order. Please try again later.");
@@ -78,7 +80,7 @@ public class FinanceService {
         }
     }
 
-    public BigDecimal buy (User user, Cryptocurrency crypto, BigDecimal quantity) {
+    public BigDecimal buy (Cryptocurrency crypto, BigDecimal quantity) {
         Wallet wallet = user.getWallet();
         BigDecimal totalPrice = quantity.multiply(crypto.getMarketPrice());
 
@@ -93,7 +95,7 @@ public class FinanceService {
         return totalPrice;
     }
 
-    public boolean executeTrade (BuyOrder buyOrder, SellingOrder sellingOrder) {
+    public static boolean executeTrade (BuyOrder buyOrder, SellingOrder sellingOrder) {
         Cryptocurrency crypto = sellingOrder.getCryptocurrencyType();
         BigDecimal fiatMoneyAmount = sellingOrder.getMinimumPrice();
         BigDecimal cryptoMoneyAmount = sellingOrder.getAmount();
@@ -113,7 +115,7 @@ public class FinanceService {
         return true;
     }
 
-    public boolean generateTransaction (User buyer, User seller, BigDecimal amount, BigDecimal price, Cryptocurrency crypto) {
+    public static boolean generateTransaction (User buyer, User seller, BigDecimal amount, BigDecimal price, Cryptocurrency crypto) {
         Transaction buyTransaction = new Transaction (crypto, amount, price, 'B');
         Transaction sellingTransaction = new Transaction (crypto, amount, price, 'S');
 
@@ -123,10 +125,10 @@ public class FinanceService {
         return true;
     }
 
-    public boolean generateTransaction (User buyer, BigDecimal amount, BigDecimal price, Cryptocurrency crypto) {
+    public boolean generateTransaction (BigDecimal amount, BigDecimal price, Cryptocurrency crypto) {
         Transaction buyTransaction = new Transaction (crypto, amount, price, 'B');
 
-        buyer.addTransaction(buyTransaction);
+        user.addTransaction(buyTransaction);
         return true;
     }
 
@@ -139,5 +141,9 @@ public class FinanceService {
     public static BigDecimal getAvailableCrypto (User user, Cryptocurrency crypto) {
         BigDecimal cryptoInSellOrders = OrderBookService.cryptoAmountInSellingOrders(crypto, user.getWallet(), user);
         return user.getWallet().getCryptocurrenciesBalance().get(crypto).subtract(cryptoInSellOrders);
+    }
+
+    public void setUser (User user) {
+        this.user = user;
     }
 }

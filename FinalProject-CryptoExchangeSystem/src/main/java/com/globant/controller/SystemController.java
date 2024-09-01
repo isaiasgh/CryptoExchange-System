@@ -3,7 +3,9 @@ package com.globant.controller;
 import com.globant.model.system.Cryptocurrency;
 import com.globant.model.system.ExchangeSystem;
 import com.globant.model.system.User;
-import com.globant.service.*;
+import com.globant.service.ExchangeSystemService;
+import com.globant.service.FinanceService;
+import com.globant.service.OrderBookService;
 import com.globant.service.exceptions.InsufficientExchangeFundsException;
 import com.globant.util.BudgetCheckResult;
 import com.globant.view.AccountView;
@@ -19,6 +21,7 @@ public class SystemController {
 
     public SystemController (User user) {
         this.user = user;
+        financeService.setUser (user);
         manageOrderController = new ManageOrderController(user, financeService);
     }
 
@@ -38,7 +41,7 @@ public class SystemController {
                         break;
                     }
 
-                    financeService.deposit(user, amount);
+                    financeService.deposit(amount);
                     ExchangeSystemService.write();
                     accountView.displayDepositConfirmation(user, user.getWallet());
                     break;
@@ -53,7 +56,7 @@ public class SystemController {
                         break;
                     }
 
-                    accountView.displayFiatMoneyBalance (OrderBookService.fiatAmountInBuyOrders(user.getWallet(), user), financeService.getAvailableFiatMoney (user));
+                    accountView.displayFiatMoneyBalance (OrderBookService.fiatAmountInBuyOrders(user.getWallet(), user), FinanceService.getAvailableFiatMoney (user));
                     String selectedCrypto = accountView.getUserCryptoChoice();
                     Cryptocurrency crypto = handleSelectedCrypto (selectedCrypto);
 
@@ -72,7 +75,7 @@ public class SystemController {
                     BigDecimal totalPrice = handleBuyService(crypto, amount);
 
                     if (totalPrice.compareTo(new BigDecimal("0")) != 0) {
-                        financeService.generateTransaction(user, amount, totalPrice, crypto);
+                        financeService.generateTransaction(amount, totalPrice, crypto);
                         ExchangeSystemService.write();
                         accountView.displayPurchaseConfirmation(user, user.getWallet(), crypto, amount, totalPrice);
                     }
@@ -102,7 +105,7 @@ public class SystemController {
     }
 
     private BigDecimal handleBuyService (Cryptocurrency crypto, BigDecimal quantity) {
-        BudgetCheckResult result = financeService.handleEnoughFiatBudget(quantity.multiply(crypto.getMarketPrice()), user);
+        BudgetCheckResult result = financeService.handleEnoughFiatBudget(quantity.multiply(crypto.getMarketPrice()));
 
         if (!result.isSuccess()) {
             accountView.showError(result.getErrorMessage());
@@ -110,7 +113,7 @@ public class SystemController {
         }
 
         try {
-            return financeService.buy(user, crypto, quantity);
+            return financeService.buy(crypto, quantity);
         } catch (InsufficientExchangeFundsException e) {
             accountView.showError("ERROR: The exchange system does not have enough amount available.");
             return BigDecimal.ZERO;
