@@ -29,13 +29,15 @@ public class AccountView extends View {
     }
 
     public void displayPurchaseConfirmation(User user, Wallet wallet, Cryptocurrency crypto, BigDecimal amountPurchased, BigDecimal totalCost) {
-        super.showInfo("Purchase completed successfully.");
-        String message = "User ID: %s\n" +
-                "Purchased Cryptocurrency: %s\n" +
-                "Amount Purchased: %s %s\n" +
-                "Total Cost: $%s\n" +
-                "Updated Fiat Money Balance: $%s\n" +
-                "Updated %s Balance: %s %s\n";
+        super.showInfo("Purchase Confirmation:");
+        System.out.println(ANSI_BLUE + "--------------------------------------" + ANSI_RESET);
+        String message =
+                "User ID: " + ANSI_YELLOW + "%s\n" + ANSI_RESET +
+                        "Purchased Cryptocurrency: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
+                        "Amount Purchased: " + ANSI_GREEN + "%s %s\n" + ANSI_RESET +
+                        "Total Cost: " + ANSI_GREEN + "$%s\n" + ANSI_RESET +
+                        "Updated Fiat Money Balance: " + ANSI_GREEN + "$%s\n" + ANSI_RESET +
+                        "Updated %s Balance: " + ANSI_GREEN + "%s %s\n" + ANSI_RESET;
 
         BigDecimal updatedCryptoBalance = wallet.getCryptocurrenciesBalance().get(crypto);
         System.out.printf(message,
@@ -48,6 +50,8 @@ public class AccountView extends View {
                 crypto.getShorthandSymbol(),
                 updatedCryptoBalance,
                 crypto.getShorthandSymbol());
+        System.out.println(ANSI_BLUE + "--------------------------------------" + ANSI_RESET);
+        System.out.println(ANSI_YELLOW + "Your purchase has been successfully completed." + ANSI_RESET);
     }
 
     public void displayTransactions(User user) {
