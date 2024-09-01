@@ -1,4 +1,4 @@
-package com.globant.service.fluctuation;
+package com.globant.service.strategy;
 
 import com.globant.model.orders.SellingOrder;
 import com.globant.model.system.Cryptocurrency;

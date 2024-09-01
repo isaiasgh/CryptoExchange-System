@@ -2,7 +2,7 @@ package com.globant.controller;
 
 import com.globant.service.ExchangeSystemService;
 import com.globant.service.OrderMatchingService;
-import com.globant.service.fluctuation.PriceFluctuationStrategy;
+import com.globant.service.strategy.PriceFluctuationStrategy;
 import com.globant.view.MainView;
 
 public class RootController {

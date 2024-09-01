@@ -1,8 +1,8 @@
 package com.globant;
 
 import com.globant.controller.RootController;
-import com.globant.service.fluctuation.MatchBasedPriceFluctuationStrategy;
-import com.globant.service.fluctuation.RandomPriceFluctuationStrategy;
+import com.globant.service.strategy.MatchBasedPriceFluctuationStrategy;
+import com.globant.service.strategy.RandomPriceFluctuationStrategy;
 import com.globant.view.MainView;
 
 public class ExchangeApplication {
