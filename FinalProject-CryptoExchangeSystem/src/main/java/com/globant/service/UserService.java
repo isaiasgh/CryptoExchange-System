@@ -2,6 +2,7 @@ package com.globant.service;
 
 import com.globant.model.system.ExchangeSystem;
 import com.globant.model.system.User;
+import com.globant.service.exceptions.UnknownAccountException;
 
 public class UserService {
     public boolean isEmailUsed (String email) {

@@ -4,6 +4,7 @@ import com.globant.model.system.Cryptocurrency;
 import com.globant.model.system.ExchangeSystem;
 import com.globant.model.system.User;
 import com.globant.service.*;
+import com.globant.service.exceptions.InsufficientExchangeFundsException;
 import com.globant.util.BudgetCheckResult;
 import com.globant.view.AccountView;
 

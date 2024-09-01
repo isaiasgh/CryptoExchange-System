@@ -1,4 +1,4 @@
-package com.globant.service;
+package com.globant.service.exceptions;
 
 public class OrdersExceedFiatBalanceException extends RuntimeException {
 }

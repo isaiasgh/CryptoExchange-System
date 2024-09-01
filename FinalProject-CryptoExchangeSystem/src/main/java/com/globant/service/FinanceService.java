@@ -7,6 +7,10 @@ import com.globant.model.orders.SellingOrder;
 import com.globant.model.system.Cryptocurrency;
 import com.globant.model.system.ExchangeSystem;
 import com.globant.model.system.User;
+import com.globant.service.exceptions.ExceedingCryptoBalanceException;
+import com.globant.service.exceptions.InsufficientExchangeFundsException;
+import com.globant.service.exceptions.InsufficientFundsException;
+import com.globant.service.exceptions.OrdersExceedFiatBalanceException;
 import com.globant.util.BudgetCheckResult;
 
 import java.math.BigDecimal;
