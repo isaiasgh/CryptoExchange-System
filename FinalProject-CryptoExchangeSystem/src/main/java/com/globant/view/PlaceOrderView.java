@@ -18,7 +18,7 @@ public class PlaceOrderView extends View {
 
     public void displayCryptocurrencies () {
         showInfo("Cryptocurrencies: ");
-        List<Cryptocurrency> cryptos = ExchangeSystem.getInstance().getCryptos();
+        List<Cryptocurrency> cryptos = ExchangeSystem.getInstance().getCryptocurrenciesList();
 
         for (Cryptocurrency crypto : cryptos) {
             System.out.println(crypto.getName() + " - " + crypto.getShorthandSymbol());
