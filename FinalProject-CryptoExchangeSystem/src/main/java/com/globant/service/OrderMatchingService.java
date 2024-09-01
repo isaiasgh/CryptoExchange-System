@@ -9,6 +9,7 @@ import com.globant.model.system.ExchangeSystem;
 import com.globant.model.system.User;
 import com.globant.service.fluctuation.MatchBasedPriceFluctuationStrategy;
 import com.globant.service.fluctuation.PriceFluctuationContext;
+import com.globant.service.fluctuation.PriceFluctuationStrategy;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -23,8 +24,8 @@ public class OrderMatchingService implements Observer, Serializable {
     private static OrderMatchingService orderMatchingService;
 
     private Map<Cryptocurrency, Deque<SellingOrder>> matchCount = new HashMap<>();
-    private static final int FLUCTUATION_THRESHOLD = 10;
-    private PriceFluctuationContext fluctuationContext;
+    private int FLUCTUATION_THRESHOLD = 10;
+    private PriceFluctuationContext fluctuationContext = new PriceFluctuationContext(new MatchBasedPriceFluctuationStrategy());
 
     private OrderMatchingService () {
         matchCount.put(ExchangeSystem.getInstance().getBitcoin(), new LinkedList<>());
@@ -116,6 +117,20 @@ public class OrderMatchingService implements Observer, Serializable {
         }
     }
 
+    public boolean setStrategy (PriceFluctuationStrategy newStrategy) {
+        fluctuationContext.setStrategy(newStrategy);
+        return true;
+    }
+
+    public boolean setFrequency (int frequencyOfFluctuation) {
+        if (frequencyOfFluctuation <= 0) {
+            return false;
+        }
+
+        FLUCTUATION_THRESHOLD = frequencyOfFluctuation;
+        return true;
+    }
+
     private void incrementMatchCount(Cryptocurrency crypto) {
         if (matchCount.get(crypto).size() == FLUCTUATION_THRESHOLD) {
             updatePrices(crypto);
@@ -124,7 +139,6 @@ public class OrderMatchingService implements Observer, Serializable {
     }
 
     private void updatePrices(Cryptocurrency crypto) {
-        fluctuationContext = new PriceFluctuationContext(new MatchBasedPriceFluctuationStrategy());
         fluctuationContext.updatePrices(crypto, matchCount.get(crypto));
     }
 }
