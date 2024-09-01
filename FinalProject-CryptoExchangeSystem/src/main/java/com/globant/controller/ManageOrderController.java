@@ -6,7 +6,9 @@ import com.globant.model.orders.SellingOrder;
 import com.globant.model.system.Cryptocurrency;
 import com.globant.model.system.ExchangeSystem;
 import com.globant.model.system.User;
-import com.globant.service.*;
+import com.globant.service.ExchangeSystemService;
+import com.globant.service.FinanceService;
+import com.globant.service.OrderBookService;
 import com.globant.util.BudgetCheckResult;
 import com.globant.view.PlaceOrderView;
 
@@ -45,13 +47,13 @@ public class ManageOrderController {
                     }
 
                     placeOrderView.displayCryptoMarketPrice (crypto);
-                    placeOrderView.displayFiatMoneyBalance (OrderBookService.fiatAmountInBuyOrders(user.getWallet(), user), financeService.getAvailableFiatMoney (user));
+                    placeOrderView.displayFiatMoneyBalance (OrderBookService.fiatAmountInBuyOrders(user.getWallet(), user), FinanceService.getAvailableFiatMoney (user));
                     if (!validateNonZeroFiatBalance ()) break;
                     amount = placeOrderView.getBigDecimalInput("Enter the amount you want to buy: ");
                     if (!isValidAmount(amount)) break;
                     BigDecimal maximumPrice = placeOrderView.getBigDecimalInput("Enter the maximum price you want to pay: ");
                     if (!isValidAmount(maximumPrice)) break;
-                    result = financeService.handleEnoughFiatBudget (maximumPrice, user);
+                    result = financeService.handleEnoughFiatBudget (maximumPrice);
 
                     if (result.isSuccess()) {
                         BuyOrder buyOrder = (BuyOrder) orderBookService.createBuyOrder(crypto, amount, maximumPrice, user);
@@ -75,7 +77,7 @@ public class ManageOrderController {
                     if (!validateNonZeroCryptoBalance (crypto)) break;
                     amount = placeOrderView.getBigDecimalInput("Enter the amount you want to sell: ");
                     if (!isValidAmount(amount)) break;
-                    result = financeService.handleEnoughCryptoBudget (amount, crypto, user);
+                    result = financeService.handleEnoughCryptoBudget (amount, crypto);
 
                     if (result.isSuccess()) {
                         BigDecimal minimumPrice = placeOrderView.getBigDecimalInput("Enter the minimum price you want tu sell: ");

@@ -84,15 +84,13 @@ public class OrderMatchingService implements Observer, Serializable {
     }
 
     private void makeTradeEffective (BuyOrder buyOrder, SellingOrder sellingOrder) {
-        FinanceService financeService = new FinanceService();
-
         User buyer = buyOrder.getOwner();
         User seller = sellingOrder.getOwner();
         BigDecimal amount = sellingOrder.getAmount();
         BigDecimal price = sellingOrder.getMinimumPrice();
 
 
-        if (!financeService.executeTrade(buyOrder, sellingOrder)) {
+        if (!FinanceService.executeTrade(buyOrder, sellingOrder)) {
             return;
         }
 
@@ -100,7 +98,7 @@ public class OrderMatchingService implements Observer, Serializable {
         orderBook.removeBuyOrder (buyOrder);
         orderBook.removeSellingOrder (sellingOrder);
 
-        financeService.generateTransaction(buyer, seller, amount, price, buyOrder.getCryptocurrencyType());
+        FinanceService.generateTransaction(buyer, seller, amount, price, buyOrder.getCryptocurrencyType());
         matchCount.get(sellingOrder.getCryptocurrencyType()).push(sellingOrder);
         incrementMatchCount(sellingOrder.getCryptocurrencyType());
         ExchangeSystemService.write();
