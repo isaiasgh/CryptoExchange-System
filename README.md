@@ -8,6 +8,7 @@
 4. [Exchange System Configuration](#4-exchange-system-configuration)
 5. [Project Structure](#5-project-structure)
 6. [Design Patterns Used](#6-design-patterns-used)
+7. [UML Diagrams](#7-uml-diagrams)
 
 ### 1. **Project Overview**
    This project simulates a cryptocurrency exchange system developed in Java. It allows users to manage their wallet, place buy and sell orders for cryptocurrencies, and execute transactions within a controlled environment.
@@ -102,3 +103,16 @@ The project is organized into several packages and directories to maintain a cle
   - **Components**:
     - **`ExchangeSystem`**: Manages the global state of the exchange, including users and cryptocurrencies.
     - **`OrderMatchingService`**: Ensures only one instance manages the order matching process. *(Note: This is less central compared to the others.)*
+
+### 7. **UML Diagrams**
+
+#### Model UML Class Diagram
+The model class diagram provides a detailed view of the core entities and their relationships within the system.
+
+- **Model Class Diagram**: ![Model UML Class Diagram](docs/UML%20Diagrams/model-diagram.jpeg)
+
+#### Other Diagrams
+Additional UML diagrams for the service and controller layers are also available for reference.
+
+- **Service Class Diagram**: ![Service UML Class Diagram](docs/UML%20Diagrams/service-diagram.jpeg)
+- **Controller Class Diagram**: ![Controller UML Class Diagram](docs/UML%20Diagrams/controller-diagram.jpeg)
