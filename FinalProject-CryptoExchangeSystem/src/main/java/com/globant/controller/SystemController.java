@@ -92,6 +92,7 @@ public class SystemController {
                     accountView.displayTransactions(user);
                     break;
                 case 7:
+                    accountView.displayLogoutConfirmation();
                     return;
                 default:
                     accountView.showError("Invalid option. Please try again.");

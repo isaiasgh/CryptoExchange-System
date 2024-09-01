@@ -3,6 +3,7 @@ package com.globant.view;
 import com.globant.model.finance.Transaction;
 import com.globant.model.finance.Wallet;
 import com.globant.model.orders.BuyOrder;
+import com.globant.model.orders.Order;
 import com.globant.model.orders.OrderBook;
 import com.globant.model.orders.SellingOrder;
 import com.globant.model.system.Cryptocurrency;
@@ -60,36 +61,40 @@ public class AccountView extends View {
         super.showInfo(ANSI_BLUE + "Transaction History for " + user.getName() + ":" + ANSI_RESET);
 
         for (Transaction transaction : transactions) {
-            String priceColor = transaction.getType().equals('B') ? ANSI_GREEN : ANSI_RED;
-            String type = transaction.getType().equals('B') ? "Buy" : "Sell";
-
-            System.out.printf(
-                    "  Transaction ID: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
-                            "  Type: " + ANSI_YELLOW + "%s\n" + ANSI_RESET +
-                            "  Amount: " + "%s %s\n" +
-                            "  Price: " + priceColor + "$%s\n" + ANSI_RESET +
-                            "  Cryptocurrency: " + "%s\n" +
-                            ANSI_BLUE + "  ------------------------------------------------------------\n" + ANSI_RESET,
-                    transaction.getID(),
-                    type,
-                    transaction.getAmountTraded(),
-                    transaction.getCryptocurrency().getShorthandSymbol(),
-                    transaction.getPrice(),
-                    transaction.getCryptocurrency().getName()
-            );
+            displayTransaction(transaction);
         }
+    }
+
+    private void displayTransaction(Transaction transaction) {
+        String priceColor = transaction.getType().equals('B') ? ANSI_GREEN : ANSI_RED;
+        String type = transaction.getType().equals('B') ? "Buy" : "Sell";
+
+        System.out.printf(
+                "  Transaction ID: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
+                        "  Type: " + ANSI_YELLOW + "%s\n" + ANSI_RESET +
+                        "  Amount: " + "%s %s\n" +
+                        "  Price: " + priceColor + "$%s\n" + ANSI_RESET +
+                        "  Cryptocurrency: " + "%s\n" +
+                        ANSI_BLUE + "  ------------------------------------------------------------\n" + ANSI_RESET,
+                transaction.getID(),
+                type,
+                transaction.getAmountTraded(),
+                transaction.getCryptocurrency().getShorthandSymbol(),
+                transaction.getPrice(),
+                transaction.getCryptocurrency().getName()
+        );
     }
 
     public boolean displayActiveOrders(OrderBook orderBook, User user) {
         boolean hasActiveOrders = false;
 
         if (!orderBook.getBuyOrders().isEmpty()) {
-            displayActiveBuyOrders(orderBook, user);
+            displayActiveBuyOrders(orderBook.getBuyOrders(), user);
             hasActiveOrders = true;
         }
 
         if (!orderBook.getSellingOrders().isEmpty()) {
-            displayActiveSellingOrders(orderBook, user);
+            displayActiveSellingOrders(orderBook.getSellingOrders(), user);
             hasActiveOrders = true;
         }
 
@@ -100,54 +105,44 @@ public class AccountView extends View {
         return hasActiveOrders;
     }
 
-    private void displayActiveSellingOrders(OrderBook orderBook, User user) {
-        List<SellingOrder> sellingOrders = orderBook.getSellingOrders();
-
-        if (!sellingOrders.isEmpty()) {
-            super.showInfo(ANSI_BLUE + "Active Selling Orders:" + ANSI_RESET);
-            for (SellingOrder sellingOrder : sellingOrders) {
-                if (sellingOrder.getOwner().equals(user)) {
-                    System.out.printf(
-                            "  Selling Order ID: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
-                                    "  Cryptocurrency: " + "%s\n" +
-                                    "  Minimum Price: " + ANSI_GREEN + "$%s\n" + ANSI_RESET +
-                                    "  Amount: " + "%s %s\n" +
-                                    "  Status: " + ANSI_YELLOW + "Active\n" + ANSI_RESET,
-                            sellingOrder.getID(),
-                            sellingOrder.getCryptocurrencyType().getName(),
-                            sellingOrder.getMinimumPrice(),
-                            sellingOrder.getAmount(),
-                            sellingOrder.getCryptocurrencyType().getShorthandSymbol()
-                    );
-                    System.out.println(ANSI_BLUE + "  -------------------" + ANSI_RESET);
-                }
+    private void displayActiveSellingOrders(List<SellingOrder> sellingOrders, User user) {
+        super.showInfo(ANSI_BLUE + "Active Selling Orders:" + ANSI_RESET);
+        for (SellingOrder sellingOrder : sellingOrders) {
+            if (sellingOrder.getOwner().equals(user)) {
+                displayOrderDetails(sellingOrder);
             }
         }
     }
 
-    private void displayActiveBuyOrders(OrderBook orderBook, User user) {
-        List<BuyOrder> buyOrders = orderBook.getBuyOrders();
-
-        if (!buyOrders.isEmpty()) {
-            super.showInfo(ANSI_BLUE + "Active Buy Orders:" + ANSI_RESET);
-            for (BuyOrder buyOrder : buyOrders) {
-                if (buyOrder.getOwner().equals(user)) {
-                    System.out.printf(
-                            "  Buy Order ID: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
-                                    "  Cryptocurrency: " + "%s\n" +
-                                    "  Maximum Price: " + ANSI_GREEN + "$%s\n" + ANSI_RESET +
-                                    "  Amount: " + "%s %s\n" +
-                                    "  Status: " + ANSI_YELLOW + "Active\n" + ANSI_RESET,
-                            buyOrder.getID(),
-                            buyOrder.getCryptocurrencyType().getName(),
-                            buyOrder.getMaximumPrice(),
-                            buyOrder.getAmount(),
-                            buyOrder.getCryptocurrencyType().getShorthandSymbol()
-                    );
-                    System.out.println(ANSI_BLUE + "  -------------------" + ANSI_RESET);
-                }
+    private void displayActiveBuyOrders(List<BuyOrder> buyOrders, User user) {
+        super.showInfo(ANSI_BLUE + "Active Buy Orders:" + ANSI_RESET);
+        for (BuyOrder buyOrder : buyOrders) {
+            if (buyOrder.getOwner().equals(user)) {
+                displayOrderDetails(buyOrder);
             }
         }
+    }
+
+    private void displayOrderDetails(Order order) {
+        String type = (order instanceof SellingOrder) ? "Selling" : "Buy";
+        String status = "Active";
+        String priceLabel = (order instanceof SellingOrder) ? "Minimum Price" : "Maximum Price";
+
+        System.out.printf(
+                "  %s Order ID: " + ANSI_GREEN + "%s\n" + ANSI_RESET +
+                        "  Cryptocurrency: " + "%s\n" +
+                        "  " + priceLabel + ": " + ANSI_GREEN + "$%s\n" + ANSI_RESET +
+                        "  Amount: " + "%s %s\n" +
+                        "  Status: " + ANSI_YELLOW + "%s\n" + ANSI_RESET,
+                type,
+                order.getID(),
+                order.getCryptocurrencyType().getName(),
+                (order instanceof SellingOrder) ? ((SellingOrder) order).getMinimumPrice() : ((BuyOrder) order).getMaximumPrice(),
+                order.getAmount(),
+                order.getCryptocurrencyType().getShorthandSymbol(),
+                status
+        );
+        System.out.println(ANSI_BLUE + "  -------------------" + ANSI_RESET);
     }
 
     public void showCancelOrderMenu() {
@@ -209,5 +204,9 @@ public class AccountView extends View {
                 displayCryptoBalance(OrderBookService.cryptoAmountInSellingOrders(crypto, user.getWallet(), user), FinanceService.getAvailableCrypto (user, crypto), crypto);
             }
         }
+    }
+
+    public void displayLogoutConfirmation() {
+        System.out.println(ANSI_BLUE + "You have successfully logged out. Thank you for using our service!" + ANSI_RESET);
     }
 }
