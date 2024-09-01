@@ -1,4 +1,4 @@
-package com.globant.model.System;
+package com.globant.model.system;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -31,6 +31,10 @@ public class Cryptocurrency implements Serializable {
 
     public String getUniqueID() {
         return uniqueID;
+    }
+
+    public void setMarketPrice(BigDecimal marketPrice) {
+        this.marketPrice = marketPrice;
     }
 
     @Override

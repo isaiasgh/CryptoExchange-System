@@ -1,7 +1,7 @@
-package com.globant.model.System;
+package com.globant.model.system;
 
-import com.globant.model.Finance.Transaction;
-import com.globant.model.Finance.Wallet;
+import com.globant.model.finance.Transaction;
+import com.globant.model.finance.Wallet;
 
 import java.io.Serializable;
 import java.util.List;

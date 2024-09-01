@@ -1,6 +1,6 @@
 package com.globant.view;
 
-import com.globant.model.System.Cryptocurrency;
+import com.globant.model.system.Cryptocurrency;
 
 import java.math.BigDecimal;
 import java.util.InputMismatchException;

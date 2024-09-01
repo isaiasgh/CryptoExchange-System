@@ -1,6 +1,6 @@
-package com.globant.model.System;
+package com.globant.model.system;
 
-import com.globant.model.Orders.OrderBook;
+import com.globant.model.orders.OrderBook;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -22,17 +22,23 @@ public class ExchangeSystem implements Serializable {
     private final Cryptocurrency dogecoin = new Cryptocurrency("DOGE", "Dogecoin", "250");
 
     private ExchangeSystem () {
-        this.users = new ArrayList<>();
-        this.orderBook = new OrderBook();
-        this.idUserCounter = 0;
-
         initializeCryptoCurrencies ();
+        this.users = new ArrayList<>();
+        this.idUserCounter = 0;
     }
 
     public void initializeCryptoCurrencies () {
         cryptocurrencies.put(bitcoin, new BigDecimal("100"));
         cryptocurrencies.put(ethereum, new BigDecimal("500"));
         cryptocurrencies.put(dogecoin, new BigDecimal("1500"));
+    }
+
+    public static ExchangeSystem getInstance () {
+        if (exchangeSystemInstance == null) {
+            exchangeSystemInstance = new ExchangeSystem ();
+            exchangeSystemInstance.setOrderBook(new OrderBook());
+        }
+        return exchangeSystemInstance;
     }
 
     public boolean updateCrypto (Cryptocurrency crypto, BigDecimal newTotalAmount) {
@@ -71,13 +77,6 @@ public class ExchangeSystem implements Serializable {
             }
         }
         return null;
-    }
-
-    public static ExchangeSystem getInstance () {
-        if (exchangeSystemInstance == null) {
-            exchangeSystemInstance = new ExchangeSystem ();
-        }
-        return exchangeSystemInstance;
     }
 
     public Cryptocurrency getCryptocurrencyByShorthandSymbol (String shortHandSymbol) {
@@ -134,6 +133,10 @@ public class ExchangeSystem implements Serializable {
 
     public static void setInstance (ExchangeSystem instance) {
         exchangeSystemInstance = instance;
+    }
+
+    private void setOrderBook(OrderBook orderBook) {
+        this.orderBook = orderBook;
     }
 
     @Override

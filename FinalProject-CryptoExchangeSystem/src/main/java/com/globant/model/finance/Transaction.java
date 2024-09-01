@@ -1,6 +1,6 @@
-package com.globant.model.Finance;
+package com.globant.model.finance;
 
-import com.globant.model.System.Cryptocurrency;
+import com.globant.model.system.Cryptocurrency;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

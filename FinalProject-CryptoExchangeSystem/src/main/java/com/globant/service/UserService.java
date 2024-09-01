@@ -1,7 +1,7 @@
 package com.globant.service;
 
-import com.globant.model.System.ExchangeSystem;
-import com.globant.model.System.User;
+import com.globant.model.system.ExchangeSystem;
+import com.globant.model.system.User;
 
 public class UserService {
     public boolean isEmailUsed (String email) {

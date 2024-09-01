@@ -1,4 +1,4 @@
-package com.globant.model.Orders;
+package com.globant.model.orders;
 
 import com.globant.service.Observer;
 import com.globant.service.OrderMatchingService;
@@ -17,7 +17,6 @@ public class OrderBook implements Serializable {
     public OrderBook () {
         this.buyOrders = new ArrayList<>();
         this.sellingOrders = new ArrayList<>();
-
         attach(OrderMatchingService.getInstance());
     }
 

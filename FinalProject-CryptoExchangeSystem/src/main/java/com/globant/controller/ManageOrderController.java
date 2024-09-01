@@ -1,11 +1,11 @@
 package com.globant.controller;
 
-import com.globant.model.Orders.BuyOrder;
-import com.globant.model.Orders.Order;
-import com.globant.model.Orders.SellingOrder;
-import com.globant.model.System.Cryptocurrency;
-import com.globant.model.System.ExchangeSystem;
-import com.globant.model.System.User;
+import com.globant.model.orders.BuyOrder;
+import com.globant.model.orders.Order;
+import com.globant.model.orders.SellingOrder;
+import com.globant.model.system.Cryptocurrency;
+import com.globant.model.system.ExchangeSystem;
+import com.globant.model.system.User;
 import com.globant.service.*;
 import com.globant.util.BudgetCheckResult;
 import com.globant.view.PlaceOrderView;
