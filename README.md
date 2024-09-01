@@ -2,11 +2,12 @@
 
 ## Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Use Cases Implemented](#use-cases-implemented)
-3. [Constraints and Design Decisions](#constraints-and-design-decisions)
-4. [Exchange System Configuration](#exchange-system-configuration)
-5. [Project Structure](#project-structure)
+1. [Project Overview](#1-project-overview)
+2. [Use Cases Implemented](#2-use-cases-implemented)
+3. [Constraints and Design Decisions](#3-constraints-and-design-decisions)
+4. [Exchange System Configuration](#4-exchange-system-configuration)
+5. [Project Structure](#5-project-structure)
+6. [Design Patterns Used](#6-design-patterns-used)
 
 ### 1. **Project Overview**
    This project simulates a cryptocurrency exchange system developed in Java. It allows users to manage their wallet, place buy and sell orders for cryptocurrencies, and execute transactions within a controlled environment.
@@ -82,3 +83,22 @@ The project is organized into several packages and directories to maintain a cle
     - `model-diagram.jpg`: UML diagram for the model classes.
     - `service-diagram.jpg`: UML diagram for the service classes.
     - `controller-diagram.jpg`: UML diagram for the controller classes.
+
+### 6. **Design Patterns Used**
+
+- **Observer Pattern**: 
+  - **Purpose**: Used for the order matching process.
+  - **Components**:
+    - **Subject**: `OrderBook` - Manages the list of orders and notifies observers when changes occur.
+    - **Observer**: `OrderMatchingService` - Reacts to changes in the `OrderBook` and performs order matching.
+
+- **Strategy Pattern**: 
+  - **Purpose**: Defines different strategies for cryptocurrency price fluctuation.
+  - **Components**: 
+    - **Strategies**: `MatchBasedPriceFluctuationStrategy` and `RandomPriceFluctuationStrategy` - Implement different algorithms for price changes based on user configuration.
+
+- **Singleton Pattern**:
+  - **Purpose**: Ensures a single instance of a class is created and used throughout the application.
+  - **Components**:
+    - **`ExchangeSystem`**: Manages the global state of the exchange, including users and cryptocurrencies.
+    - **`OrderMatchingService`**: Ensures only one instance manages the order matching process. *(Note: This is less central compared to the others.)*
