@@ -33,6 +33,10 @@ public class Cryptocurrency implements Serializable {
         return uniqueID;
     }
 
+    public void setMarketPrice(BigDecimal marketPrice) {
+        this.marketPrice = marketPrice;
+    }
+
     @Override
     public String toString () {
         return name + "(ID: " + uniqueID + ")\nMarket Price: $" + marketPrice;

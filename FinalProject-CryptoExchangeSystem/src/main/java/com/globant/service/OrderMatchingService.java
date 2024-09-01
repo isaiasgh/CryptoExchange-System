@@ -12,19 +12,24 @@ import com.globant.service.fluctuation.PriceFluctuationContext;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderMatchingService implements Observer, Serializable {
     private static OrderMatchingService orderMatchingService;
 
     private Map<Cryptocurrency, Deque<SellingOrder>> matchCount = new HashMap<>();
-    private static final int FLUCTUATION_THRESHOLD = 5;
+    private static final int FLUCTUATION_THRESHOLD = 10;
     private PriceFluctuationContext fluctuationContext;
 
     private OrderMatchingService () {
-        for (Map.Entry <Cryptocurrency, BigDecimal> entry : ExchangeSystem.getInstance().getCryptocurrencies().entrySet()) {
-            matchCount.put(entry.getKey(), new LinkedList<>());
-        }
+        matchCount.put(ExchangeSystem.getInstance().getBitcoin(), new LinkedList<>());
+        matchCount.put(ExchangeSystem.getInstance().getDogecoin(), new LinkedList<>());
+        matchCount.put(ExchangeSystem.getInstance().getEthereum(), new LinkedList<>());
     }
 
     public static OrderMatchingService getInstance () {
@@ -121,9 +126,5 @@ public class OrderMatchingService implements Observer, Serializable {
     private void updatePrices(Cryptocurrency crypto) {
         fluctuationContext = new PriceFluctuationContext(new MatchBasedPriceFluctuationStrategy());
         fluctuationContext.updatePrices(crypto, matchCount.get(crypto));
-    }
-
-    private Object readResolve() {
-        return getInstance();
     }
 }

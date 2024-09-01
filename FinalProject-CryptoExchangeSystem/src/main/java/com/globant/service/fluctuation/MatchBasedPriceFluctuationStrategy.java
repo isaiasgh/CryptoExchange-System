@@ -8,7 +8,8 @@ import java.math.BigDecimal;
 public class MatchBasedPriceFluctuationStrategy implements PriceFluctuationStrategy, Serializable {
 
     @Override
-    public void applyFluctuation(Cryptocurrency crypto, BigDecimal newValue) {
-
+    public void applyFluctuation(Cryptocurrency crypto, BigDecimal averageOrdersValue) {
+        if (averageOrdersValue.compareTo(new BigDecimal("0")) == 0) return;
+        crypto.setMarketPrice (averageOrdersValue);
     }
 }

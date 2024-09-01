@@ -23,6 +23,10 @@ public class PriceFluctuationContext implements Serializable {
         }
     }
 
+    public void setStrategy(PriceFluctuationStrategy strategy) {
+        this.strategy = strategy;
+    }
+
     private BigDecimal calculateAverageOrdersValue () {
         if (sellingOrders.isEmpty()) return BigDecimal.ZERO;
 
@@ -30,9 +34,14 @@ public class PriceFluctuationContext implements Serializable {
         int size = sellingOrders.size();
 
         while (!sellingOrders.isEmpty()) {
-            total = total.add(sellingOrders.pop().getMinimumPrice());
+            total = total.add(getCryptoValue(sellingOrders.pop()));
         }
 
         return total.divide(new BigDecimal(size));
+    }
+
+    private BigDecimal getCryptoValue (SellingOrder order) {
+        BigDecimal quantity = order.getAmount();
+        return order.getMinimumPrice().divide(quantity);
     }
 }
