@@ -7,9 +7,9 @@ import com.globant.model.orders.SellingOrder;
 import com.globant.model.system.Cryptocurrency;
 import com.globant.model.system.ExchangeSystem;
 import com.globant.model.system.User;
-import com.globant.service.fluctuation.MatchBasedPriceFluctuationStrategy;
-import com.globant.service.fluctuation.PriceFluctuationContext;
-import com.globant.service.fluctuation.PriceFluctuationStrategy;
+import com.globant.service.strategy.MatchBasedPriceFluctuationStrategy;
+import com.globant.service.strategy.PriceFluctuationContext;
+import com.globant.service.strategy.PriceFluctuationStrategy;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
