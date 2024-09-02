@@ -16,16 +16,18 @@ public class MainView extends View {
 
     public String getNameInput () {
         System.out.print("Enter your name: ");
-        return scanner.next();
+        return scanner.nextLine();
     }
 
     public String getEmailInput () {
         System.out.print("Enter your email: ");
-        return scanner.next();
+        String email = scanner.next();
+        scanner.nextLine();
+        return email;
     }
 
     public String getPasswordInput () {
         System.out.print("Enter a password: ");
-        return scanner.next();
+        return scanner.nextLine();
     }
 }
