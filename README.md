@@ -7,8 +7,9 @@
 3. [Constraints and Design Decisions](#3-constraints-and-design-decisions)
 4. [Design Patterns Used](#4-design-patterns-used)
 5. [Exchange System Configuration](#5-exchange-system-configuration)
-6. [UML Diagrams](#6-uml-diagrams)
-7. [Project Structure](#7-project-structure)
+6. [Initial Data and Testing Instructions](#6-initial-data-and-testing-instructions)
+7. [UML Diagrams](#7-uml-diagrams)
+8. [Project Structure](#8-project-structure)
 
 ### 1. **Project Overview**
    This project simulates a cryptocurrency exchange system developed in Java. It allows users to manage their wallet, place buy and sell orders for cryptocurrencies, and execute transactions within a controlled environment.
@@ -34,25 +35,6 @@
         1. **Match-Based Price Fluctuation Strategy** (`MatchBasedPriceFluctuationStrategy`): This strategy adjusts the price of a cryptocurrency based on the results of order matches. For example, if a buy order is matched above the current market price, the price increases; if it’s matched below, the price decreases. Users can also decide how frequently the prices update, based on a specific number of matched orders.
 
         2. **Random Price Fluctuation Strategy** (`RandomPriceFluctuationStrategy`): This strategy changes prices at random intervals, mimicking the unpredictable nature of real-world cryptocurrency markets. Although the intervals are random, users can still set how frequently the price updates, based on the number of matched orders.
-
-### 4. **Design Patterns Used**
-
-- **Observer Pattern**: 
-  - **Purpose**: Used for the order matching process.
-  - **Components**:
-    - **Subject**: `OrderBook` - Manages the list of orders and notifies observers when changes occur.
-    - **Observer**: `OrderMatchingService` - Reacts to changes in the `OrderBook` and performs order matching.
-
-- **Strategy Pattern**: 
-  - **Purpose**: Defines different strategies for cryptocurrency price fluctuation.
-  - **Components**: 
-    - **Strategies**: `MatchBasedPriceFluctuationStrategy` and `RandomPriceFluctuationStrategy` - Implement different algorithms for price changes based on user configuration.
-
-- **Singleton Pattern**:
-  - **Purpose**: Ensures a single instance of a class is created and used throughout the application.
-  - **Components**:
-    - **`ExchangeSystem`**: Manages the global state of the exchange, including users and cryptocurrencies.
-    - **`OrderMatchingService`**: Ensures only one instance manages the order matching process. *(Note: This is less central compared to the others.)*
 
 ### 5. **Exchange System Configuration**
 
@@ -85,7 +67,63 @@ rootController.configureSystem(new RandomPriceFluctuationStrategy(), 2);
 
 This allows for random price changes while still setting the frequency of updates.
 
-### 6. **UML Diagrams**
+### 4. **Design Patterns Used**
+
+- **Observer Pattern**: 
+  - **Purpose**: Used for the order matching process.
+  - **Components**:
+    - **Subject**: `OrderBook` - Manages the list of orders and notifies observers when changes occur.
+    - **Observer**: `OrderMatchingService` - Reacts to changes in the `OrderBook` and performs order matching.
+
+- **Strategy Pattern**: 
+  - **Purpose**: Defines different strategies for cryptocurrency price fluctuation.
+  - **Components**: 
+    - **Strategies**: `MatchBasedPriceFluctuationStrategy` and `RandomPriceFluctuationStrategy` - Implement different algorithms for price changes based on user configuration.
+
+- **Singleton Pattern**:
+  - **Purpose**: Ensures a single instance of a class is created and used throughout the application.
+  - **Components**:
+    - **`ExchangeSystem`**: Manages the global state of the exchange, including users and cryptocurrencies.
+    - **`OrderMatchingService`**: Ensures only one instance manages the order matching process. *(Note: This is less central compared to the others.)*
+
+
+### 6. **Initial data and testing instructions**
+The data is saved in a serialized file named `system.ser`, which includes all the user and system information.
+
+#### Data Storage
+
+- The application stores all user and system data in a file named `system.ser`.
+- If you wish to reset the data, simply delete the `system.ser` file. Upon restarting the application, a new `system.ser` file will be generated automatically, containing only the system information (e.g., cryptocurrencies, their quantities, and prices) without any user data.
+
+#### Preloaded Data Details
+The `system.ser` file currently includes the following users and data:
+
+##### **User 1: Juan**
+- **Name:** Juan
+- **Email:** juan@gmail.com
+- **Password:** juan1234
+- **Cryptocurrency Balances:**
+  - **1.5 BTC Total:** 0.5 BTC committed to a sell order with a minimum price of $20000.
+  - **15 DOGE Total:** 2 DOGE committed to a sell order with a total minimum price of $10000.
+- **Fiat Money Balance:**
+  - **$71250 Total:** $2500 committed to a buy order for 1 ETH and $68750 available for purchases.
+
+##### **User 2: Ángel**
+- **Name:** Ángel
+- **Email:** angel@gmail.com
+- **Password:** angel1234
+- **Cryptocurrency Balances:**
+  - **10 ETH Total:** 3 ETH committed to a sell order with a minimum price of $10,500.
+- **Fiat Money Balance:**
+  - **$40,000 Total:** $30,000 committed to a buy order for 1 BTC.
+
+#### System Behavior and Initial Conditions
+
+- So far, only transactions between users and the ExchangeSystem have been generated. 
+- No transactions have occurred between users, meaning no buy-sell order matches have been made. As a result, cryptocurrency values remain at their initial prices.
+- Additionally, the system is configured to trigger price fluctuations every 5 matched orders using the `MatchBasedPriceFluctuationStrategy`.
+
+### 7. **UML Diagrams**
 
 #### Model UML Class Diagram
 The model class diagram provides a detailed view of the core entities and their relationships within the system.
@@ -98,7 +136,7 @@ Additional UML diagrams for the service and controller layers are also available
 - **Service Class Diagram**: ![Service UML Class Diagram](docs/UML%20Diagrams/service-diagram.jpeg)
 - **Controller Class Diagram**: ![Controller UML Class Diagram](docs/UML%20Diagrams/controller-diagram.jpeg)
 
-### 7. **Project Structure**
+### 8. **Project Structure**
 
 The project is organized into several packages and directories to maintain a clean and manageable codebase. Below is an overview of the project structure:
 
