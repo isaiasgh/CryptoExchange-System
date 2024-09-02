@@ -13,6 +13,7 @@ import com.globant.service.FinanceService;
 import com.globant.service.OrderBookService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -91,15 +92,31 @@ public class AccountView extends View {
 
     public boolean displayActiveOrders(OrderBook orderBook, User user) {
         boolean hasActiveOrders = false;
+        List<Order> userBuyOrders = new ArrayList<>();
+        List<Order> userSellingOrders = new ArrayList<>();
 
-        if (!orderBook.getBuyOrders().isEmpty()) {
-            displayActiveBuyOrders(orderBook.getBuyOrders(), user);
-            hasActiveOrders = true;
+        for (Order order : orderBook.getBuyOrders()) {
+            if (order.getOwner().equals(user)) {
+                userBuyOrders.add(order);
+                hasActiveOrders = true;
+            }
         }
 
-        if (!orderBook.getSellingOrders().isEmpty()) {
-            displayActiveSellingOrders(orderBook.getSellingOrders(), user);
-            hasActiveOrders = true;
+        for (Order order : orderBook.getSellingOrders()) {
+            if (order.getOwner().equals(user)) {
+                userSellingOrders.add(order);
+                hasActiveOrders = true;
+            }
+        }
+
+        if (!userBuyOrders.isEmpty()) {
+            super.showInfo(ANSI_BLUE + "Active Buy Orders:" + ANSI_RESET);
+            displayOrders(userBuyOrders);
+        }
+
+        if (!userSellingOrders.isEmpty()) {
+            super.showInfo(ANSI_BLUE + "Active Selling Orders:" + ANSI_RESET);
+            displayOrders(userSellingOrders);
         }
 
         if (!hasActiveOrders) {
@@ -109,21 +126,9 @@ public class AccountView extends View {
         return hasActiveOrders;
     }
 
-    private void displayActiveSellingOrders(List<SellingOrder> sellingOrders, User user) {
-        super.showInfo(ANSI_BLUE + "Active Selling Orders:" + ANSI_RESET);
-        for (SellingOrder sellingOrder : sellingOrders) {
-            if (sellingOrder.getOwner().equals(user)) {
-                displayOrderDetails(sellingOrder);
-            }
-        }
-    }
-
-    private void displayActiveBuyOrders(List<BuyOrder> buyOrders, User user) {
-        super.showInfo(ANSI_BLUE + "Active Buy Orders:" + ANSI_RESET);
-        for (BuyOrder buyOrder : buyOrders) {
-            if (buyOrder.getOwner().equals(user)) {
-                displayOrderDetails(buyOrder);
-            }
+    private void displayOrders(List<Order> orders) {
+        for (Order order : orders) {
+            displayOrderDetails(order);
         }
     }
 

@@ -12,25 +12,24 @@ import com.globant.service.strategy.PriceFluctuationContext;
 import com.globant.service.strategy.PriceFluctuationStrategy;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.List;
 
 public class OrderMatchingService implements Observer, Serializable {
     private static OrderMatchingService orderMatchingService;
 
-    private Map<Cryptocurrency, Deque<SellingOrder>> matchCount = new HashMap<>();
+    private Map<Cryptocurrency, PriorityQueue<SellingOrder>> matchCount = new HashMap<>();
     private int FLUCTUATION_THRESHOLD = 10;
     private PriceFluctuationContext fluctuationContext = new PriceFluctuationContext(new MatchBasedPriceFluctuationStrategy());
 
     private OrderMatchingService () {
-        matchCount.put(ExchangeSystem.getInstance().getBitcoin(), new LinkedList<>());
-        matchCount.put(ExchangeSystem.getInstance().getDogecoin(), new LinkedList<>());
-        matchCount.put(ExchangeSystem.getInstance().getEthereum(), new LinkedList<>());
+        matchCount.put(ExchangeSystem.getInstance().getBitcoin(), new PriorityQueue<>());
+        matchCount.put(ExchangeSystem.getInstance().getDogecoin(), new PriorityQueue<>());
+        matchCount.put(ExchangeSystem.getInstance().getEthereum(), new PriorityQueue<>());
     }
 
     public static OrderMatchingService getInstance () {
@@ -99,7 +98,7 @@ public class OrderMatchingService implements Observer, Serializable {
         orderBook.removeSellingOrder (sellingOrder);
 
         FinanceService.generateTransaction(buyer, seller, amount, price, buyOrder.getCryptocurrencyType());
-        matchCount.get(sellingOrder.getCryptocurrencyType()).push(sellingOrder);
+        matchCount.get(sellingOrder.getCryptocurrencyType()).offer(sellingOrder);
         incrementMatchCount(sellingOrder.getCryptocurrencyType());
         ExchangeSystemService.write();
     }
@@ -132,7 +131,7 @@ public class OrderMatchingService implements Observer, Serializable {
     private void incrementMatchCount(Cryptocurrency crypto) {
         if (matchCount.get(crypto).size() == FLUCTUATION_THRESHOLD) {
             updatePrices(crypto);
-            matchCount.put(crypto, new LinkedList<>());
+            matchCount.put(crypto, new PriorityQueue<>());
         }
     }
 
