@@ -43,16 +43,20 @@ public class View {
     }
 
     public int getUserChoice (String message, int minRange, int maxRange) {
-        System.out.print(message);
-        try {
-            int choice = scanner.nextInt();
-            if (choice < minRange || choice > maxRange) {
-                return INVALID_CHOICE;
+        while (true) {
+            System.out.print(message);
+            try {
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+                if (choice < minRange || choice > maxRange) {
+                    showError("Choice out of range. Please enter a number between " + minRange + " and " + maxRange + ".");
+                } else {
+                    return choice;
+                }
+            } catch (InputMismatchException e) {
+                showError("Invalid input. Please enter a valid number.");
+                scanner.nextLine();
             }
-            return choice;
-        } catch (InputMismatchException e) {
-            scanner.nextLine();
-            return INVALID_CHOICE;
         }
     }
 
@@ -60,29 +64,31 @@ public class View {
         return getUserChoice("Enter your choice: ", minRange, maxRange);
     }
 
-    public BigDecimal getBigDecimalInput (String messsage) {
-        try {
-            System.out.print(messsage);
+    public BigDecimal getBigDecimalInput(String message) {
+        while (true) {
+            try {
+                System.out.print(message);
+                String input = scanner.nextLine();
 
-            BigDecimal returnInput = scanner.nextBigDecimal();
+                BigDecimal returnInput = new BigDecimal(input.trim());
 
-            if (returnInput.compareTo(new BigDecimal("0")) < 0) {
-                showError("Invalid amount format. Please enter a valid number or type 0 to cancel");
-                return getBigDecimalInput(messsage);
+                if (returnInput.compareTo(BigDecimal.ZERO) < 0) {
+                    showError("Invalid amount format. Please enter a valid number greater than 0 or type 0 to cancel.");
+                } else {
+                    return returnInput;
+                }
+
+            } catch (NumberFormatException e) {
+                showError("Invalid amount format. Please enter a valid number or type 0 to cancel.");
             }
-
-            return returnInput;
-
-        } catch (InputMismatchException e) {
-            showError("Invalid amount format. Please enter a valid number or type 0 to cancel");
-            scanner.nextLine();
-            return getBigDecimalInput(messsage);
         }
     }
 
     public String getUserCryptoChoice() {
         System.out.print("Enter the shorthand symbol: ");
-        return scanner.next().toUpperCase();
+        String userChoice = scanner.next().toUpperCase();
+        scanner.nextLine();
+        return userChoice;
     }
 
     public void showInfo(String message) {
