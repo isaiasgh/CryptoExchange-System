@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class Order implements Serializable {
+public class Order implements Serializable, Comparable<Order> {
     private int ID;;
     private User owner;
     private Cryptocurrency cryptocurrencyType;
@@ -36,5 +36,14 @@ public class Order implements Serializable {
 
     public User getOwner() {
         return owner;
+    }
+
+    public LocalDateTime getCreationTime () {
+        return creationTime;
+    }
+
+    @Override
+    public int compareTo(Order o) {
+        return creationTime.compareTo(o.creationTime);
     }
 }
