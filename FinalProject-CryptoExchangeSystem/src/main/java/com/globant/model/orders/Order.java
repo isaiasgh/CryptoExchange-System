@@ -5,14 +5,17 @@ import com.globant.model.system.User;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
-public class Order implements Serializable {
+public class Order implements Serializable, Comparable<Order> {
+    private int ID;;
+    private User owner;
     private Cryptocurrency cryptocurrencyType;
     private BigDecimal amount;
-    private User owner;
-    private int ID;;
+    private LocalDateTime creationTime;
 
     public Order (Cryptocurrency cryptocurrencyType, BigDecimal amount, User owner, int id) {
+        creationTime = LocalDateTime.now();
         this.ID = id;
         this.owner = owner;
         this.amount = amount;
@@ -33,5 +36,14 @@ public class Order implements Serializable {
 
     public User getOwner() {
         return owner;
+    }
+
+    public LocalDateTime getCreationTime () {
+        return creationTime;
+    }
+
+    @Override
+    public int compareTo(Order o) {
+        return creationTime.compareTo(o.creationTime);
     }
 }
