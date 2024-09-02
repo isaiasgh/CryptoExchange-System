@@ -21,7 +21,10 @@ public class AccountController {
 
         try{
             User user = userService.logIn(email, password);
-            if (user == null) return;
+            if (user == null) {
+                view.showError("Incorrect credentials");
+                return;
+            }
 
             systemController = new SystemController(user);
             systemController.handleAccountMenu();

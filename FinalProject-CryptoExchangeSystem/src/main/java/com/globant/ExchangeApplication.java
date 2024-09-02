@@ -9,7 +9,7 @@ public class ExchangeApplication {
     public static void main(String[] args) {
         MainView view = new MainView();
         RootController rootController = new RootController(view);
-        rootController.configureSystem(new MatchBasedPriceFluctuationStrategy(), 2);
+        rootController.configureSystem(new MatchBasedPriceFluctuationStrategy(), 5);
         rootController.run();
         view.close();
     }
