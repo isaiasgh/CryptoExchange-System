@@ -12,7 +12,7 @@
 8. [Project Structure](#8-project-structure)
 
 ### 1. **Project Overview**
-   This project simulates a cryptocurrency exchange system developed in Java. It allows users to manage their wallet, place buy and sell orders for cryptocurrencies, and execute transactions within a controlled environment.
+   This project simulates a cryptocurrency exchange system developed in Java. It allows users to manage their wallet, place buy and sell orders for cryptocurrencies,and purchase cryptos from the system.
 
 ### 2. **Use Cases Implemented**
    - **User Registration**
@@ -27,17 +27,20 @@
 ### 3. **Constraints and Design Decisions**
    - **Locked Balance in Active Orders**: When a user places a buy or sell order, the corresponding fiat or cryptocurrency balance is locked. This means the committed funds or cryptocurrency are reserved exclusively for that order and cannot be used in other transactions until the order is either fulfilled or cancelled.
 
-   - **Users Can Manage Their Active Orders**: Users have the ability to view and manage their active buy and sell orders. They can cancel orders that have not yet been matched, which will release any locked balances back into their wallet. This functionality provides users with flexibility in adjusting their trading strategies.
+   - **Users Can Manage Their Active Orders**: Users are able to view and manage their active buy and sell orders. They can cancel orders that have not yet been matched, which will release any locked balances back into their wallet.
 
    - **Cryptocurrency Price Fluctuation Based on User-Selected Strategy**: The system offers flexibility in how cryptocurrency prices fluctuate, allowing the user to select between different fluctuation strategies and decide how frequently these price updates occur.
 
-        **Fluctuation Strategies**:
-        1. **Match-Based Price Fluctuation Strategy** (`MatchBasedPriceFluctuationStrategy`): This strategy adjusts the price of a cryptocurrency based on the results of order matches. For example, if a buy order is matched above the current market price, the price increases; if it’s matched below, the price decreases. Users can also decide how frequently the prices update, based on a specific number of matched orders.
+      ### Fluctuation Strategies:
+      Both strategies are designed to operate based on the last *n* order matches for each cryptocurrency. This means that if the average value of the last *n* orders for a specific crypto is higher than its current market value, the new price will increase. Alternatively, if the average value is lower, its market price will decrease.
 
-        2. **Random Price Fluctuation Strategy** (`RandomPriceFluctuationStrategy`): This strategy changes prices at random intervals, mimicking the unpredictable nature of real-world cryptocurrency markets. Although the intervals are random, users can still set how frequently the price updates, based on the number of matched orders.
+        1. **Match-Based Price Fluctuation Strategy** (`MatchBasedPriceFluctuationStrategy`): This strategy adjusts the market price of a cryptocurrency based on the average value of the last *n* matched orders.
+
+        2. **Random Price Fluctuation Strategy** (`RandomPriceFluctuationStrategy`): This strategy changes prices at random intervals.
+
+      The user can configure the number of order matches required to update a cryptocurrency's market price.
 
 ### 5. **Exchange System Configuration**
-
 Users can set up the `ExchangeSystem` to choose the fluctuation strategy and decide how often prices are updated. This is configured in the `ExchangeApplication` class before running the system.
 
 **How to Change the Fluctuation Strategy**:
@@ -113,9 +116,9 @@ The `system.ser` file currently includes the following users and data:
 - **Email:** angel@gmail.com
 - **Password:** angel1234
 - **Cryptocurrency Balances:**
-  - **10 ETH Total:** 3 ETH committed to a sell order with a minimum price of $10,500.
+  - **10 ETH Total:** 3 ETH committed to a sell order with a minimum price of $10500.
 - **Fiat Money Balance:**
-  - **$40,000 Total:** $30,000 committed to a buy order for 1 BTC.
+  - **$40,000 Total:** $30000 committed to a buy order for 1 BTC.
 
 #### System Behavior and Initial Conditions
 
@@ -137,10 +140,9 @@ Additional UML diagrams for the service and controller layers are also available
 - **Controller Class Diagram**: ![Controller UML Class Diagram](docs/UML%20Diagrams/controller-diagram.jpeg)
 
 ### 8. **Project Structure**
-
 The project is organized into several packages and directories to maintain a clean and manageable codebase. Below is an overview of the project structure:
 
-- **src/**: Contains the source code of the project.
+- **FinalProject-CryptoExchangeSystem/src/**: Contains the source code of the project.
   - **com.globant.model/**: Contains the model classes representing the core entities of the system.
     - `finance/`: Classes related to financial operations.
     - `orders/`: Classes related to orders and order management.
