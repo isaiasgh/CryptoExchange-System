@@ -1,16 +1,5 @@
 # CryptoExchange-System
 
-## Table of Contents
-
-1. [Project Overview](#1-project-overview)
-2. [Use Cases Implemented](#2-use-cases-implemented)
-3. [Constraints and Design Decisions](#3-constraints-and-design-decisions)
-4. [Design Patterns Used](#4-design-patterns-used)
-5. [Exchange System Configuration](#5-exchange-system-configuration)
-6. [Initial Data and Testing Instructions](#6-initial-data-and-testing-instructions)
-7. [UML Diagrams](#7-uml-diagrams)
-8. [Project Structure](#8-project-structure)
-
 ### 1. **Project Overview**
    This project simulates a cryptocurrency exchange system developed in Java. It allows users to manage their wallet, place buy and sell orders for cryptocurrencies,and purchase cryptos from the system.
 
@@ -39,6 +28,25 @@
         2. **Random Price Fluctuation Strategy** (`RandomPriceFluctuationStrategy`): This strategy changes prices at random intervals.
 
       The user can configure the number of order matches required to update a cryptocurrency's market price.
+
+### 4. **Design Patterns Used**
+
+- **Observer Pattern**: 
+  - **Purpose**: Used for the order matching process.
+  - **Components**:
+    - **Subject**: `OrderBook` - Manages the list of orders and notifies observers when changes occur.
+    - **Observer**: `OrderMatchingService` - Reacts to changes in the `OrderBook` and performs order matching.
+
+- **Strategy Pattern**: 
+  - **Purpose**: Defines different strategies for cryptocurrency price fluctuation.
+  - **Components**: 
+    - **Strategies**: `MatchBasedPriceFluctuationStrategy` and `RandomPriceFluctuationStrategy` - Implement different algorithms for price changes based on user configuration.
+
+- **Singleton Pattern**:
+  - **Purpose**: Ensures a single instance of a class is created and used throughout the application.
+  - **Components**:
+    - **`ExchangeSystem`**: Manages the global state of the exchange, including users and cryptocurrencies.
+    - **`OrderMatchingService`**: Ensures only one instance manages the order matching process. *(Note: This is less central compared to the others.)*
 
 ### 5. **Exchange System Configuration**
 Users can set up the `ExchangeSystem` to choose the fluctuation strategy and decide how often prices are updated. This is configured in the `ExchangeApplication` class before running the system.
@@ -69,26 +77,6 @@ rootController.configureSystem(new RandomPriceFluctuationStrategy(), 2);
 ```
 
 This allows for random price changes while still setting the frequency of updates.
-
-### 4. **Design Patterns Used**
-
-- **Observer Pattern**: 
-  - **Purpose**: Used for the order matching process.
-  - **Components**:
-    - **Subject**: `OrderBook` - Manages the list of orders and notifies observers when changes occur.
-    - **Observer**: `OrderMatchingService` - Reacts to changes in the `OrderBook` and performs order matching.
-
-- **Strategy Pattern**: 
-  - **Purpose**: Defines different strategies for cryptocurrency price fluctuation.
-  - **Components**: 
-    - **Strategies**: `MatchBasedPriceFluctuationStrategy` and `RandomPriceFluctuationStrategy` - Implement different algorithms for price changes based on user configuration.
-
-- **Singleton Pattern**:
-  - **Purpose**: Ensures a single instance of a class is created and used throughout the application.
-  - **Components**:
-    - **`ExchangeSystem`**: Manages the global state of the exchange, including users and cryptocurrencies.
-    - **`OrderMatchingService`**: Ensures only one instance manages the order matching process. *(Note: This is less central compared to the others.)*
-
 
 ### 6. **Initial data and testing instructions**
 The data is saved in a serialized file named `system.ser`, which includes all the user and system information.
